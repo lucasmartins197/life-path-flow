@@ -2,25 +2,100 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+
+// Public pages
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+
+// App pages (USER role)
+import AppHome from "./pages/app/AppHome";
+import JourneysHome from "./pages/app/JourneysHome";
+import TherapyHome from "./pages/app/TherapyHome";
+import RoutineHome from "./pages/app/RoutineHome";
+
+// Pro pages (PROFESSIONAL role)
+import ProHome from "./pages/pro/ProHome";
+
+// Admin pages (ADMIN role)
+import AdminHome from "./pages/admin/AdminHome";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Navigate to="/auth" replace />} />
+            <Route path="/auth" element={<Auth />} />
+            
+            {/* Protected APP routes (USER role) */}
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <AppHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/jornada"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <JourneysHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/terapia"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <TherapyHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/rotina"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <RoutineHome />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Protected PRO routes (PROFESSIONAL role) */}
+            <Route
+              path="/pro"
+              element={
+                <ProtectedRoute allowedRoles={["professional", "admin"]}>
+                  <ProHome />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Protected ADMIN routes (ADMIN role) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminHome />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
