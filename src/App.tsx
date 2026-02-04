@@ -15,6 +15,10 @@ import AppHome from "./pages/app/AppHome";
 import JourneysHome from "./pages/app/JourneysHome";
 import TherapyHome from "./pages/app/TherapyHome";
 import RoutineHome from "./pages/app/RoutineHome";
+import NutritionHome from "./pages/app/NutritionHome";
+import ExerciseHome from "./pages/app/ExerciseHome";
+import CalendarHome from "./pages/app/CalendarHome";
+import AnchorHome from "./pages/app/AnchorHome";
 
 // Pro pages (PROFESSIONAL role)
 import ProHome from "./pages/pro/ProHome";
@@ -66,6 +70,38 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["user", "admin"]}>
                   <RoutineHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/nutricao"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <NutritionHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/exercicios"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <ExerciseHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/agenda"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <CalendarHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/ancora"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <AnchorHome />
                 </ProtectedRoute>
               }
             />
