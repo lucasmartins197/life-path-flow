@@ -6,7 +6,7 @@ import {
   Calendar, 
   ChevronRight,
   Flame,
-  LogOut,
+  Settings,
   Utensils,
   Dumbbell,
   CalendarDays,
@@ -19,11 +19,6 @@ import { FloatingAIButton } from "@/components/FloatingAIButton";
 export default function AppHome() {
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth");
-  };
 
   const quickModules = [
     { id: "nutricao", label: "Nutrição", icon: Utensils, path: "/app/nutricao", color: "text-orange-500" },
@@ -54,10 +49,10 @@ export default function AppHome() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={handleSignOut}
+              onClick={() => navigate("/app/configuracoes")}
               className="text-muted-foreground"
             >
-              <LogOut className="h-5 w-5" />
+              <Settings className="h-5 w-5" />
             </Button>
           </div>
         </div>

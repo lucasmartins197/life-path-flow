@@ -194,7 +194,15 @@ export default function Auth() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="login-password">Senha</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="login-password">Senha</Label>
+                      <a 
+                        href="/auth/forgot-password" 
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Esqueceu a senha?
+                      </a>
+                    </div>
                     <Input
                       id="login-password"
                       type="password"
@@ -220,6 +228,23 @@ export default function Auth() {
                       "Entrar"
                     )}
                   </Button>
+                  
+                  <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-2 text-muted-foreground">
+                        Ou
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <a href="/auth/professional-register" className="block">
+                    <Button variant="outline" className="w-full" type="button">
+                      Sou profissional de saúde
+                    </Button>
+                  </a>
                 </form>
               </TabsContent>
               
