@@ -4,12 +4,16 @@ import {
   Compass, 
   Heart, 
   Calendar, 
-  MessageCircle,
   ChevronRight,
   Flame,
-  LogOut
+  LogOut,
+  Utensils,
+  Dumbbell,
+  CalendarDays,
+  Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { FloatingAIButton } from "@/components/FloatingAIButton";
 
 export default function AppHome() {
@@ -20,6 +24,13 @@ export default function AppHome() {
     await signOut();
     navigate("/auth");
   };
+
+  const quickModules = [
+    { id: "nutricao", label: "Nutrição", icon: Utensils, path: "/app/nutricao", color: "text-orange-500" },
+    { id: "exercicios", label: "Exercícios", icon: Dumbbell, path: "/app/exercicios", color: "text-blue-500" },
+    { id: "agenda", label: "Agenda", icon: CalendarDays, path: "/app/agenda", color: "text-purple-500" },
+    { id: "ancora", label: "Rede de Apoio", icon: Shield, path: "/app/ancora", color: "text-primary" },
+  ];
 
   return (
     <div className="min-h-screen bg-background safe-top safe-bottom">
@@ -55,13 +66,29 @@ export default function AppHome() {
       {/* Main Content */}
       <main className="container px-4 py-6 pb-24">
         {/* Welcome Section */}
-        <section className="mb-8">
+        <section className="mb-6">
           <h2 className="text-2xl font-display font-bold mb-2">
             Sua jornada continua
           </h2>
           <p className="text-muted-foreground">
             Escolha uma área para explorar hoje
           </p>
+        </section>
+
+        {/* Quick Access Modules */}
+        <section className="mb-6">
+          <div className="grid grid-cols-4 gap-3">
+            {quickModules.map((module) => (
+              <button
+                key={module.id}
+                onClick={() => navigate(module.path)}
+                className="flex flex-col items-center p-3 rounded-xl bg-card border border-border hover:bg-muted/50 transition-colors"
+              >
+                <module.icon className={`h-6 w-6 mb-2 ${module.color}`} />
+                <span className="text-xs font-medium text-center">{module.label}</span>
+              </button>
+            ))}
+          </div>
         </section>
 
         {/* Three Hubs */}
