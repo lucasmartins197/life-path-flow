@@ -14,16 +14,669 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agent_memory: {
+        Row: {
+          content: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          importance: number | null
+          memory_type: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          importance?: number | null
+          memory_type: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          importance?: number | null
+          memory_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      agent_messages: {
+        Row: {
+          actions_taken: Json | null
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          actions_taken?: Json | null
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          actions_taken?: Json | null
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      finance_events: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          event_type: string
+          id: string
+          is_completed: boolean | null
+          is_recurring: boolean | null
+          recurrence_pattern: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          event_type: string
+          id?: string
+          is_completed?: boolean | null
+          is_recurring?: boolean | null
+          recurrence_pattern?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          event_type?: string
+          id?: string
+          is_completed?: boolean | null
+          is_recurring?: boolean | null
+          recurrence_pattern?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      journey_steps: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          exercises: Json | null
+          id: string
+          is_published: boolean | null
+          reflection_questions: Json | null
+          step_number: number
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          exercises?: Json | null
+          id?: string
+          is_published?: boolean | null
+          reflection_questions?: Json | null
+          step_number: number
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          exercises?: Json | null
+          id?: string
+          is_published?: boolean | null
+          reflection_questions?: Json | null
+          step_number?: number
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          title: string
+          type: Database["public"]["Enums"]["notification_type"] | null
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          title: string
+          type?: Database["public"]["Enums"]["notification_type"] | null
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      patient_professional_links: {
+        Row: {
+          id: string
+          is_active: boolean | null
+          linked_at: string
+          patient_id: string
+          professional_id: string
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean | null
+          linked_at?: string
+          patient_id: string
+          professional_id: string
+        }
+        Update: {
+          id?: string
+          is_active?: boolean | null
+          linked_at?: string
+          patient_id?: string
+          professional_id?: string
+        }
+        Relationships: []
+      }
+      patient_profiles: {
+        Row: {
+          created_at: string
+          current_step: number | null
+          date_of_birth: string | null
+          emergency_contact: string | null
+          health_notes: string | null
+          id: string
+          journey_started_at: string | null
+          last_activity_at: string | null
+          streak_days: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_step?: number | null
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          health_notes?: string | null
+          id?: string
+          journey_started_at?: string | null
+          last_activity_at?: string | null
+          streak_days?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_step?: number | null
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          health_notes?: string | null
+          id?: string
+          journey_started_at?: string | null
+          last_activity_at?: string | null
+          streak_days?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      patient_record_entries: {
+        Row: {
+          content: string
+          created_at: string
+          entry_type: string
+          id: string
+          is_private: boolean | null
+          metadata: Json | null
+          patient_id: string
+          professional_id: string | null
+          title: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          entry_type: string
+          id?: string
+          is_private?: boolean | null
+          metadata?: Json | null
+          patient_id: string
+          professional_id?: string | null
+          title?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          entry_type?: string
+          id?: string
+          is_private?: boolean | null
+          metadata?: Json | null
+          patient_id?: string
+          professional_id?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          payment_type: string
+          platform_fee: number | null
+          professional_amount: number | null
+          session_id: string | null
+          status: Database["public"]["Enums"]["payment_status"] | null
+          stripe_payment_id: string | null
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          payment_type: string
+          platform_fee?: number | null
+          professional_amount?: number | null
+          session_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_payment_id?: string | null
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          payment_type?: string
+          platform_fee?: number | null
+          professional_amount?: number | null
+          session_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_payment_id?: string | null
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          credentials: string | null
+          hourly_rate: number | null
+          id: string
+          is_approved: boolean | null
+          is_online: boolean | null
+          rating: number | null
+          specialty: string
+          total_sessions: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          credentials?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_approved?: boolean | null
+          is_online?: boolean | null
+          rating?: number | null
+          specialty: string
+          total_sessions?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          credentials?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_approved?: boolean | null
+          is_online?: boolean | null
+          rating?: number | null
+          specialty?: string
+          total_sessions?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      routine_days: {
+        Row: {
+          afternoon_plan: Json | null
+          created_at: string
+          date: string
+          evening_plan: Json | null
+          id: string
+          mood_rating: number | null
+          morning_plan: Json | null
+          notes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          afternoon_plan?: Json | null
+          created_at?: string
+          date: string
+          evening_plan?: Json | null
+          id?: string
+          mood_rating?: number | null
+          morning_plan?: Json | null
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          afternoon_plan?: Json | null
+          created_at?: string
+          date?: string
+          evening_plan?: Json | null
+          id?: string
+          mood_rating?: number | null
+          morning_plan?: Json | null
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          notes: string | null
+          patient_id: string
+          price: number
+          professional_id: string
+          rating: number | null
+          scheduled_at: string
+          session_type: string | null
+          status: Database["public"]["Enums"]["session_status"] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          patient_id: string
+          price: number
+          professional_id: string
+          rating?: number | null
+          scheduled_at: string
+          session_type?: string | null
+          status?: Database["public"]["Enums"]["session_status"] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          price?: number
+          professional_id?: string
+          rating?: number | null
+          scheduled_at?: string
+          session_type?: string | null
+          status?: Database["public"]["Enums"]["session_status"] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          plan_type: string
+          price_amount: number
+          started_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"] | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_type: string
+          price_amount: number
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"] | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_type?: string
+          price_amount?: number
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"] | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trail_progress: {
+        Row: {
+          completed_at: string | null
+          exercises_completed: Json | null
+          id: string
+          is_completed: boolean | null
+          reflection_answers: Json | null
+          started_at: string | null
+          step_id: string
+          user_id: string
+          video_watched: boolean | null
+        }
+        Insert: {
+          completed_at?: string | null
+          exercises_completed?: Json | null
+          id?: string
+          is_completed?: boolean | null
+          reflection_answers?: Json | null
+          started_at?: string | null
+          step_id: string
+          user_id: string
+          video_watched?: boolean | null
+        }
+        Update: {
+          completed_at?: string | null
+          exercises_completed?: Json | null
+          id?: string
+          is_completed?: boolean | null
+          reflection_answers?: Json | null
+          started_at?: string | null
+          step_id?: string
+          user_id?: string
+          video_watched?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trail_progress_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "journey_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_badges: {
+        Row: {
+          badge_name: string
+          badge_type: string
+          earned_at: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          badge_name: string
+          badge_type: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          badge_name?: string
+          badge_type?: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_access_patient_record: {
+        Args: { _patient_id: string; _professional_id: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "professional" | "admin"
+      notification_type:
+        | "system"
+        | "session"
+        | "payment"
+        | "journey"
+        | "routine"
+      payment_status: "pending" | "completed" | "failed" | "refunded"
+      session_status: "scheduled" | "in_progress" | "completed" | "cancelled"
+      subscription_status: "active" | "cancelled" | "expired" | "pending"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +803,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "professional", "admin"],
+      notification_type: ["system", "session", "payment", "journey", "routine"],
+      payment_status: ["pending", "completed", "failed", "refunded"],
+      session_status: ["scheduled", "in_progress", "completed", "cancelled"],
+      subscription_status: ["active", "cancelled", "expired", "pending"],
+    },
   },
 } as const

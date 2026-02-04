@@ -1,0 +1,314 @@
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2, Heart, Leaf, Shield } from "lucide-react";
+
+export default function Auth() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupName, setSignupName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  
+  const { signIn, signUp, user, roles } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
+
+  // Redirect if already logged in
+  if (user) {
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+    
+    if (from) {
+      navigate(from, { replace: true });
+    } else if (roles.includes("admin")) {
+      navigate("/admin", { replace: true });
+    } else if (roles.includes("professional")) {
+      navigate("/pro", { replace: true });
+    } else {
+      navigate("/app", { replace: true });
+    }
+    return null;
+  }
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    const { error } = await signIn(loginEmail, loginPassword);
+    
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro no login",
+        description: error.message === "Invalid login credentials" 
+          ? "Email ou senha incorretos" 
+          : error.message,
+      });
+    } else {
+      toast({
+        title: "Bem-vindo de volta!",
+        description: "Login realizado com sucesso.",
+      });
+    }
+    
+    setIsLoading(false);
+  }
+
+  async function handleSignup(e: React.FormEvent) {
+    e.preventDefault();
+    
+    if (signupPassword !== confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "As senhas não coincidem.",
+      });
+      return;
+    }
+    
+    if (signupPassword.length < 6) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "A senha deve ter pelo menos 6 caracteres.",
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    const { error } = await signUp(signupEmail, signupPassword, signupName);
+    
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro no cadastro",
+        description: error.message,
+      });
+    } else {
+      toast({
+        title: "Conta criada!",
+        description: "Verifique seu email para confirmar o cadastro.",
+      });
+    }
+    
+    setIsLoading(false);
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col lg:flex-row bg-background">
+      {/* Left side - Branding */}
+      <div className="lg:flex-1 bg-gradient-to-br from-primary to-primary/80 p-8 lg:p-12 flex flex-col justify-center text-white">
+        <div className="max-w-md mx-auto lg:mx-0">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+              <Heart className="h-6 w-6" />
+            </div>
+            <h1 className="text-2xl lg:text-3xl font-display font-bold">
+              Apostando na Vida
+            </h1>
+          </div>
+          
+          <h2 className="text-3xl lg:text-4xl font-display font-bold mb-6">
+            Sua jornada de transformação começa aqui
+          </h2>
+          
+          <p className="text-lg text-white/80 mb-8">
+            Um programa completo de terapia digital para apoiar sua recuperação 
+            com profissionais qualificados e ferramentas personalizadas.
+          </p>
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <Leaf className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Jornada dos 12 Passos</h3>
+                <p className="text-sm text-white/70">Trilha guiada de recuperação</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <Heart className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Terapia Online</h3>
+                <p className="text-sm text-white/70">Profissionais especializados</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <Shield className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Seguro e Confidencial</h3>
+                <p className="text-sm text-white/70">Seus dados protegidos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Right side - Auth forms */}
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
+        <Card className="w-full max-w-md border-0 shadow-xl">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-2xl font-display">Acesse sua conta</CardTitle>
+            <CardDescription>
+              Entre ou crie uma conta para continuar
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="login">Entrar</TabsTrigger>
+                <TabsTrigger value="signup">Criar conta</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="login-email">Email</Label>
+                    <Input
+                      id="login-email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      required
+                      className="input-premium"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="login-password">Senha</Label>
+                    <Input
+                      id="login-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      required
+                      className="input-premium"
+                    />
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    className="w-full btn-premium-primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Entrando...
+                      </>
+                    ) : (
+                      "Entrar"
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+              
+              <TabsContent value="signup">
+                <form onSubmit={handleSignup} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-name">Nome completo</Label>
+                    <Input
+                      id="signup-name"
+                      type="text"
+                      placeholder="Seu nome"
+                      value={signupName}
+                      onChange={(e) => setSignupName(e.target.value)}
+                      required
+                      className="input-premium"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={signupEmail}
+                      onChange={(e) => setSignupEmail(e.target.value)}
+                      required
+                      className="input-premium"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">Senha</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      placeholder="Mínimo 6 caracteres"
+                      value={signupPassword}
+                      onChange={(e) => setSignupPassword(e.target.value)}
+                      required
+                      className="input-premium"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirmar senha</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      placeholder="Repita a senha"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="input-premium"
+                    />
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    className="w-full btn-premium-primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Criando conta...
+                      </>
+                    ) : (
+                      "Criar conta"
+                    )}
+                  </Button>
+                  
+                  <p className="text-xs text-muted-foreground text-center">
+                    Ao criar uma conta, você concorda com nossos{" "}
+                    <a href="#" className="text-primary hover:underline">
+                      Termos de Uso
+                    </a>{" "}
+                    e{" "}
+                    <a href="#" className="text-primary hover:underline">
+                      Política de Privacidade
+                    </a>
+                    .
+                  </p>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
