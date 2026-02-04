@@ -8,17 +8,23 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 // Public pages
 import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import ProfessionalRegister from "./pages/auth/ProfessionalRegister";
 import NotFound from "./pages/NotFound";
 
 // App pages (USER role)
 import AppHome from "./pages/app/AppHome";
 import JourneysHome from "./pages/app/JourneysHome";
+import JourneyStep from "./pages/app/JourneyStep";
 import TherapyHome from "./pages/app/TherapyHome";
 import RoutineHome from "./pages/app/RoutineHome";
 import NutritionHome from "./pages/app/NutritionHome";
 import ExerciseHome from "./pages/app/ExerciseHome";
 import CalendarHome from "./pages/app/CalendarHome";
 import AnchorHome from "./pages/app/AnchorHome";
+import SettingsHome from "./pages/app/SettingsHome";
+import OnboardingProfile from "./pages/app/OnboardingProfile";
 
 // Pro pages (PROFESSIONAL role)
 import ProHome from "./pages/pro/ProHome";
@@ -39,6 +45,9 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Navigate to="/auth" replace />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+            <Route path="/auth/reset-password" element={<ResetPassword />} />
+            <Route path="/auth/professional-register" element={<ProfessionalRegister />} />
             
             {/* Protected APP routes (USER role) */}
             <Route
@@ -54,6 +63,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["user", "admin"]}>
                   <JourneysHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/jornada/:stepNumber"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <JourneyStep />
                 </ProtectedRoute>
               }
             />
@@ -102,6 +119,22 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["user", "admin"]}>
                   <AnchorHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/configuracoes"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <SettingsHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/onboarding"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <OnboardingProfile />
                 </ProtectedRoute>
               }
             />

@@ -872,30 +872,63 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          city: string | null
+          complement: string | null
+          country: string | null
+          cpf: string | null
           created_at: string
+          date_of_birth: string | null
           full_name: string | null
           id: string
+          neighborhood: string | null
+          number: string | null
+          onboarding_completed: boolean | null
           phone: string | null
+          state: string | null
+          street: string | null
           updated_at: string
           user_id: string
+          zip_code: string | null
         }
         Insert: {
           avatar_url?: string | null
+          city?: string | null
+          complement?: string | null
+          country?: string | null
+          cpf?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           id?: string
+          neighborhood?: string | null
+          number?: string | null
+          onboarding_completed?: boolean | null
           phone?: string | null
+          state?: string | null
+          street?: string | null
           updated_at?: string
           user_id: string
+          zip_code?: string | null
         }
         Update: {
           avatar_url?: string | null
+          city?: string | null
+          complement?: string | null
+          country?: string | null
+          cpf?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           id?: string
+          neighborhood?: string | null
+          number?: string | null
+          onboarding_completed?: boolean | null
           phone?: string | null
+          state?: string | null
+          street?: string | null
           updated_at?: string
           user_id?: string
+          zip_code?: string | null
         }
         Relationships: []
       }
