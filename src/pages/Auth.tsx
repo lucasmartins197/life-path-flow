@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -23,21 +23,22 @@ export default function Auth() {
   const location = useLocation();
   const { toast } = useToast();
 
-  // Redirect if already logged in
-  if (user) {
-    const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
-    
-    if (from) {
-      navigate(from, { replace: true });
-    } else if (roles.includes("admin")) {
-      navigate("/admin", { replace: true });
-    } else if (roles.includes("professional")) {
-      navigate("/pro", { replace: true });
-    } else {
-      navigate("/app", { replace: true });
+  // Redirect if already logged in - using useEffect to avoid render-time navigation
+  useEffect(() => {
+    if (user) {
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+      
+      if (from) {
+        navigate(from, { replace: true });
+      } else if (roles.includes("admin")) {
+        navigate("/admin", { replace: true });
+      } else if (roles.includes("professional")) {
+        navigate("/pro", { replace: true });
+      } else {
+        navigate("/app", { replace: true });
+      }
     }
-    return null;
-  }
+  }, [user, roles, navigate, location.state]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();

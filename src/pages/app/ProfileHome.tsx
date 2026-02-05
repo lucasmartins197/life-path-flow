@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PortoSeguroButton } from "@/components/PortoSeguroButton";
 import { AIChatPanel } from "@/components/chat/AIChatPanel";
 
 export default function ProfileHome() {
@@ -115,6 +116,7 @@ export default function ProfileHome() {
       </main>
 
       <BottomNavigation />
+      <PortoSeguroButton />
       <AIChatPanel />
     </div>
   );

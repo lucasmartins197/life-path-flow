@@ -1,11 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Compass, Heart, Wallet, User } from "lucide-react";
+import { Compass, Stethoscope, Calendar, TrendingUp } from "lucide-react";
 
 const navItems = [
   { id: "jornada", label: "Jornada", icon: Compass, path: "/app/jornada" },
-  { id: "saude", label: "Saúde", icon: Heart, path: "/app/saude" },
-  { id: "financas", label: "Finanças", icon: Wallet, path: "/app/financas" },
-  { id: "perfil", label: "Perfil", icon: User, path: "/app/perfil" },
+  { id: "terapia", label: "Terapia", icon: Stethoscope, path: "/app/terapia" },
+  { id: "rotina", label: "Rotina", icon: Calendar, path: "/app/rotina" },
+  { id: "evolucao", label: "Evolução", icon: TrendingUp, path: "/app/evolucao" },
 ];
 
 export function BottomNavigation() {

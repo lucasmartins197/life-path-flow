@@ -2,15 +2,16 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   Compass, 
-  Heart, 
-  Wallet,
+  Stethoscope, 
+  Calendar,
+  TrendingUp,
   ChevronRight,
   Flame,
-  TrendingUp,
   Activity
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PortoSeguroButton } from "@/components/PortoSeguroButton";
 import { AIChatPanel } from "@/components/chat/AIChatPanel";
 
 export default function AppHome() {
@@ -19,8 +20,8 @@ export default function AppHome() {
 
   const quickStats = [
     { label: "Dias na Jornada", value: "7", icon: Flame, trend: "+3" },
-    { label: "Saúde Score", value: "82", icon: Activity, trend: "+5" },
-    { label: "Economia", value: "R$ 450", icon: TrendingUp, trend: "+12%" },
+    { label: "Streak", value: "5", icon: Activity, trend: "+2" },
+    { label: "Passo Atual", value: "3", icon: Compass, trend: "" },
   ];
 
   return (
@@ -48,13 +49,15 @@ export default function AppHome() {
                 <stat.icon className="h-5 w-5 mx-auto mb-2 text-primary" />
                 <p className="text-lg font-bold text-foreground">{stat.value}</p>
                 <p className="text-[10px] text-muted-foreground">{stat.label}</p>
-                <span className="text-[10px] text-success font-medium">{stat.trend}</span>
+                {stat.trend && (
+                  <span className="text-[10px] text-success font-medium">{stat.trend}</span>
+                )}
               </CardContent>
             </Card>
           ))}
         </section>
 
-        {/* Main Modules */}
+        {/* Main Modules - As per prompt: Jornada, Terapia, Rotina, Evolução */}
         <section className="space-y-4">
           {/* A Jornada */}
           <button
@@ -95,63 +98,64 @@ export default function AppHome() {
             </div>
           </button>
 
-          {/* Saúde */}
+          {/* Terapia */}
           <button
-            onClick={() => navigate("/app/saude")}
+            onClick={() => navigate("/app/terapia")}
             className="w-full module-card module-card-health group text-left"
           >
             <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
-              <Heart className="h-20 w-20" />
+              <Stethoscope className="h-20 w-20" />
             </div>
             
             <div className="relative z-10">
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
-                <Heart className="h-6 w-6" />
+                <Stethoscope className="h-6 w-6" />
               </div>
               
               <h3 className="text-xl font-display font-bold mb-1">
-                Saúde
+                Terapia
               </h3>
               <p className="text-white/80 text-sm mb-3">
-                IA Nutricional e Treinos Personalizados
+                Psicólogos, psiquiatras e terapeutas
               </p>
               
               <div className="flex items-center gap-4 text-sm text-white/80">
-                <span>🥗 Nutrição</span>
-                <span>🏋️ Treinos</span>
+                <span>🩺 Agendar</span>
+                <span>💬 Consultas</span>
               </div>
             </div>
             
             <div className="absolute bottom-4 right-4 flex items-center gap-1 text-white/80">
-              <span className="text-sm">Explorar</span>
+              <span className="text-sm">Ver Profissionais</span>
               <ChevronRight className="h-4 w-4" />
             </div>
           </button>
 
-          {/* Finanças */}
+          {/* Rotina */}
           <button
-            onClick={() => navigate("/app/financas")}
+            onClick={() => navigate("/app/rotina")}
             className="w-full module-card module-card-finance group text-left"
           >
             <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
-              <Wallet className="h-20 w-20" />
+              <Calendar className="h-20 w-20" />
             </div>
             
             <div className="relative z-10">
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
-                <Wallet className="h-6 w-6" />
+                <Calendar className="h-6 w-6" />
               </div>
               
               <h3 className="text-xl font-display font-bold mb-1">
-                Finanças
+                Rotina
               </h3>
               <p className="text-white/80 text-sm mb-3">
-                Controle financeiro inteligente
+                Checklist diário e organização da vida
               </p>
               
               <div className="flex items-center gap-4 text-sm text-white/80">
-                <span>💰 Gastos</span>
-                <span>📊 Relatórios</span>
+                <span>😴 Sono</span>
+                <span>🏋️ Exercício</span>
+                <span>🍎 Alimentação</span>
               </div>
             </div>
             
@@ -160,11 +164,50 @@ export default function AppHome() {
               <ChevronRight className="h-4 w-4" />
             </div>
           </button>
+
+          {/* Minha Evolução */}
+          <button
+            onClick={() => navigate("/app/evolucao")}
+            className="w-full module-card group text-left"
+            style={{ 
+              background: "linear-gradient(135deg, hsl(192 70% 28%) 0%, hsl(160 84% 32%) 100%)" 
+            }}
+          >
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
+              <TrendingUp className="h-20 w-20 text-white" />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
+                <TrendingUp className="h-6 w-6 text-white" />
+              </div>
+              
+              <h3 className="text-xl font-display font-bold mb-1 text-white">
+                Minha Evolução
+              </h3>
+              <p className="text-white/80 text-sm mb-3">
+                Acompanhe seu progresso e conquistas
+              </p>
+              
+              <div className="flex items-center gap-4 text-sm text-white/80">
+                <span>📊 Gráficos</span>
+                <span>🏆 Conquistas</span>
+              </div>
+            </div>
+            
+            <div className="absolute bottom-4 right-4 flex items-center gap-1 text-white/80">
+              <span className="text-sm">Ver Evolução</span>
+              <ChevronRight className="h-4 w-4" />
+            </div>
+          </button>
         </section>
       </main>
 
       {/* Bottom Navigation */}
       <BottomNavigation />
+
+      {/* Porto Seguro - Fixed Button */}
+      <PortoSeguroButton />
 
       {/* AI Chat */}
       <AIChatPanel />

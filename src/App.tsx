@@ -28,6 +28,7 @@ import OnboardingProfile from "./pages/app/OnboardingProfile";
 import HealthHome from "./pages/app/HealthHome";
 import FinanceHome from "./pages/app/FinanceHome";
 import ProfileHome from "./pages/app/ProfileHome";
+import EvolutionHome from "./pages/app/EvolutionHome";
 
 // Pro pages (PROFESSIONAL role)
 import ProHome from "./pages/pro/ProHome";
@@ -162,6 +163,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["user", "admin"]}>
                   <ProfileHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/evolucao"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <EvolutionHome />
                 </ProtectedRoute>
               }
             />
