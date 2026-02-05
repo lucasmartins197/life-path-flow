@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const N8N_WEBHOOK_URL = "http://localhost:5678/webhook/chat-agente";
+const N8N_WEBHOOK_URL = "http://89.167.15.77:5678/rest/webhooks/chat-agente";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

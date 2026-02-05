@@ -86,6 +86,14 @@ export default {
           DEFAULT: "hsl(var(--journey))",
           foreground: "hsl(var(--journey-foreground))",
         },
+        health: {
+          DEFAULT: "hsl(var(--health))",
+          foreground: "hsl(var(--health-foreground))",
+        },
+        finance: {
+          DEFAULT: "hsl(var(--finance))",
+          foreground: "hsl(var(--finance-foreground))",
+        },
         therapy: {
           DEFAULT: "hsl(var(--therapy))",
           foreground: "hsl(var(--therapy-foreground))",

@@ -4,126 +4,130 @@
 
 /* ============================================
    MOVIMENTO APOSTANDO NA VIDA - DESIGN SYSTEM
-   Premium Healthtech Design (Apple Health / Headspace / Notion)
+   Calm & Professional Theme (Azul Petróleo + Cinza Ardósia)
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* Background & Surface Colors */
-    --background: 220 20% 97.5%; /* #F7F8FA */
-    --foreground: 222 47% 11%;
+    /* Background & Surface Colors - Clean whites */
+    --background: 210 20% 98%; /* #F8FAFB */
+    --foreground: 215 25% 17%; /* #1F2937 Slate gray */
     
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 215 25% 17%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 215 25% 17%;
     
-    /* Primary - Healing Green */
-    --primary: 122 41% 34%; /* #2E7D32 */
+    /* Primary - Petrol Blue / Teal */
+    --primary: 192 70% 28%; /* #155E75 Petrol blue */
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary - Soft Neutral */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary - Slate Gray */
+    --secondary: 215 16% 93%; /* #E5E7EB */
+    --secondary-foreground: 215 25% 27%;
     
-    /* Muted - Subtle backgrounds */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    /* Muted - Light gray backgrounds */
+    --muted: 210 16% 96%;
+    --muted-foreground: 215 16% 47%; /* #6B7280 */
     
-    /* Accent - Warm highlight */
-    --accent: 122 41% 95%;
-    --accent-foreground: 122 41% 34%;
+    /* Accent - Soft teal highlight */
+    --accent: 192 70% 95%;
+    --accent-foreground: 192 70% 28%;
     
     /* Destructive */
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     
     /* Utility Colors */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 122 41% 34%;
+    --border: 214 14% 89%; /* #D1D5DB */
+    --input: 214 14% 89%;
+    --ring: 192 70% 28%;
     
     --radius: 0.75rem;
     
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 122 41% 34%;
+    --sidebar-foreground: 215 25% 17%;
+    --sidebar-primary: 192 70% 28%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 122 41% 95%;
-    --sidebar-accent-foreground: 122 41% 34%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 122 41% 34%;
+    --sidebar-accent: 192 70% 95%;
+    --sidebar-accent-foreground: 192 70% 28%;
+    --sidebar-border: 214 14% 89%;
+    --sidebar-ring: 192 70% 28%;
     
-    /* Custom semantic colors */
-    --success: 122 41% 34%;
+    /* Semantic colors */
+    --success: 160 84% 39%; /* Teal green */
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
     
-    /* Journey specific */
-    --journey: 122 41% 34%;
+    /* Module-specific colors */
+    --journey: 192 70% 28%; /* Petrol blue */
     --journey-foreground: 0 0% 100%;
     
-    /* Therapy specific */
-    --therapy: 199 89% 48%;
+    --health: 160 84% 39%; /* Teal green */
+    --health-foreground: 0 0% 100%;
+    
+    --finance: 215 25% 37%; /* Slate */
+    --finance-foreground: 0 0% 100%;
+    
+    --therapy: 192 70% 28%;
     --therapy-foreground: 0 0% 100%;
     
-    /* Routine specific */
-    --routine: 262 52% 47%;
+    --routine: 215 25% 37%;
     --routine-foreground: 0 0% 100%;
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
-    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.04), 0 1px 2px -1px hsl(0 0% 0% / 0.04);
-    --shadow-card-hover: 0 4px 12px 0 hsl(0 0% 0% / 0.08), 0 2px 4px -2px hsl(0 0% 0% / 0.04);
+    /* Shadows - Subtle */
+    --shadow-sm: 0 1px 2px 0 hsl(215 25% 17% / 0.03);
+    --shadow-md: 0 4px 6px -1px hsl(215 25% 17% / 0.05), 0 2px 4px -2px hsl(215 25% 17% / 0.03);
+    --shadow-lg: 0 10px 15px -3px hsl(215 25% 17% / 0.05), 0 4px 6px -4px hsl(215 25% 17% / 0.03);
+    --shadow-xl: 0 20px 25px -5px hsl(215 25% 17% / 0.06), 0 8px 10px -6px hsl(215 25% 17% / 0.03);
+    --shadow-card: 0 1px 3px 0 hsl(215 25% 17% / 0.02), 0 1px 2px -1px hsl(215 25% 17% / 0.02);
+    --shadow-card-hover: 0 4px 12px 0 hsl(215 25% 17% / 0.06), 0 2px 4px -2px hsl(215 25% 17% / 0.02);
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 215 28% 9%; /* #0F172A */
     --foreground: 210 40% 98%;
     
-    --card: 222 47% 8%;
+    --card: 215 28% 12%;
     --card-foreground: 210 40% 98%;
     
-    --popover: 222 47% 8%;
+    --popover: 215 28% 12%;
     --popover-foreground: 210 40% 98%;
     
-    --primary: 122 41% 45%;
+    --primary: 192 70% 45%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 217 33% 17%;
+    --secondary: 215 28% 17%;
     --secondary-foreground: 210 40% 98%;
     
-    --muted: 217 33% 17%;
+    --muted: 215 28% 17%;
     --muted-foreground: 215 20% 65%;
     
-    --accent: 122 41% 15%;
-    --accent-foreground: 122 41% 65%;
+    --accent: 192 70% 18%;
+    --accent-foreground: 192 70% 65%;
     
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 122 41% 45%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 192 70% 45%;
     
-    --sidebar-background: 222 47% 6%;
+    --sidebar-background: 215 28% 9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 122 41% 45%;
+    --sidebar-primary: 192 70% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 122 41% 15%;
-    --sidebar-accent-foreground: 122 41% 65%;
-    --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 122 41% 45%;
+    --sidebar-accent: 192 70% 18%;
+    --sidebar-accent-foreground: 192 70% 65%;
+    --sidebar-border: 215 28% 17%;
+    --sidebar-ring: 192 70% 45%;
   }
 }
 
@@ -159,42 +163,72 @@
   
   .card-premium:hover {
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
   
-  /* Hub Cards */
-  .hub-card {
-    @apply relative overflow-hidden rounded-3xl p-8 min-h-[200px] flex flex-col justify-between;
+  /* Module Cards - Clean gradient style */
+  .module-card {
+    @apply relative overflow-hidden rounded-2xl p-6 flex flex-col;
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
   }
   
-  .hub-card:hover {
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-4px);
+  .module-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
   }
   
-  .hub-card-journey {
-    background: linear-gradient(135deg, hsl(var(--journey)) 0%, hsl(122 41% 28%) 100%);
+  .module-card-journey {
+    background: linear-gradient(135deg, hsl(192 70% 28%) 0%, hsl(192 70% 22%) 100%);
     @apply text-white;
   }
   
-  .hub-card-therapy {
-    background: linear-gradient(135deg, hsl(var(--therapy)) 0%, hsl(199 89% 38%) 100%);
+  .module-card-health {
+    background: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 84% 32%) 100%);
     @apply text-white;
   }
   
-  .hub-card-routine {
-    background: linear-gradient(135deg, hsl(var(--routine)) 0%, hsl(262 52% 37%) 100%);
+  .module-card-finance {
+    background: linear-gradient(135deg, hsl(215 25% 37%) 0%, hsl(215 25% 30%) 100%);
     @apply text-white;
   }
   
-  /* Floating AI Button */
+  /* Floating AI Button - Clinical style */
   .fab-ai {
-    @apply fixed bottom-6 right-6 z-50 flex items-center justify-center;
+    @apply fixed z-50 flex items-center justify-center;
     @apply w-14 h-14 rounded-full bg-primary text-primary-foreground;
     @apply shadow-lg hover:shadow-xl transition-all duration-300;
     @apply hover:scale-105 active:scale-95;
+    bottom: calc(5rem + env(safe-area-inset-bottom, 0));
+    right: 1.5rem;
+  }
+  
+  /* Bottom Navigation */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-40;
+    @apply bg-card/95 backdrop-blur-lg border-t border-border;
+    @apply safe-bottom;
+  }
+  
+  .bottom-nav-content {
+    @apply flex items-center justify-around py-2 max-w-lg mx-auto;
+  }
+  
+  .bottom-nav-item {
+    @apply flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-colors;
+    @apply text-muted-foreground hover:text-foreground;
+  }
+  
+  .bottom-nav-item.active {
+    @apply text-primary;
+  }
+  
+  .bottom-nav-item.active .nav-icon-bg {
+    @apply bg-primary/10;
+  }
+  
+  .nav-icon-bg {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center transition-colors;
   }
   
   /* Glass effect */
@@ -226,18 +260,64 @@
     @apply hover:bg-secondary/80 focus:ring-secondary;
   }
   
-  /* Progress bar */
-  .progress-journey {
-    @apply h-2 rounded-full bg-primary/20 overflow-hidden;
+  /* Chat styles */
+  .chat-container {
+    @apply flex flex-col h-full bg-background;
   }
   
-  .progress-journey-fill {
+  .chat-message {
+    @apply max-w-[85%] rounded-2xl px-4 py-3;
+  }
+  
+  .chat-message-user {
+    @apply bg-primary text-primary-foreground ml-auto;
+  }
+  
+  .chat-message-assistant {
+    @apply bg-muted text-foreground mr-auto;
+  }
+  
+  .quick-action-btn {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full;
+    @apply bg-primary/10 text-primary text-sm font-medium;
+    @apply hover:bg-primary/20 transition-colors;
+    @apply border border-primary/20;
+  }
+  
+  /* Metric Card */
+  .metric-card {
+    @apply bg-card rounded-2xl p-5 border border-border;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .metric-value {
+    @apply text-2xl font-bold text-foreground;
+  }
+  
+  .metric-label {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  .metric-change-positive {
+    @apply text-success text-xs font-medium;
+  }
+  
+  .metric-change-negative {
+    @apply text-destructive text-xs font-medium;
+  }
+  
+  /* Progress bar */
+  .progress-bar {
+    @apply h-2 rounded-full bg-secondary overflow-hidden;
+  }
+  
+  .progress-fill {
     @apply h-full rounded-full bg-primary transition-all duration-500;
   }
   
   /* Badge */
   .badge-streak {
-    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full;
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full;
     @apply bg-accent text-accent-foreground text-sm font-medium;
   }
   
@@ -249,7 +329,7 @@
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
