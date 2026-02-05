@@ -80,8 +80,9 @@ export function FloatingAIButton() {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
 
+      // Send to n8n webhook via edge function
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/therapeutic-agent`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/webhook-forwarder`,
         {
           method: "POST",
           headers: {
@@ -98,12 +99,16 @@ export function FloatingAIButton() {
 
       const data = await response.json();
 
+      // Handle n8n response
+      const assistantMessage = typeof data.data === 'string' 
+        ? data.data 
+        : data.data?.message || data.data?.response || "Mensagem recebida!";
+
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: data.message,
-          actions: data.actions_executed,
+          content: assistantMessage,
         },
       ]);
     } catch (error) {
