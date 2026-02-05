@@ -3,98 +3,66 @@ import { useAuth } from "@/contexts/AuthContext";
 import { 
   Compass, 
   Heart, 
-  Calendar, 
+  Wallet,
   ChevronRight,
   Flame,
-  Settings,
-  Utensils,
-  Dumbbell,
-  CalendarDays,
-  Shield
+  TrendingUp,
+  Activity
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FloatingAIButton } from "@/components/FloatingAIButton";
+import { BottomNavigation } from "@/components/BottomNavigation";
+import { AIChatPanel } from "@/components/chat/AIChatPanel";
 
 export default function AppHome() {
   const navigate = useNavigate();
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
 
-  const quickModules = [
-    { id: "nutricao", label: "Nutrição", icon: Utensils, path: "/app/nutricao", color: "text-orange-500" },
-    { id: "exercicios", label: "Exercícios", icon: Dumbbell, path: "/app/exercicios", color: "text-blue-500" },
-    { id: "agenda", label: "Agenda", icon: CalendarDays, path: "/app/agenda", color: "text-purple-500" },
-    { id: "ancora", label: "Rede de Apoio", icon: Shield, path: "/app/ancora", color: "text-primary" },
+  const quickStats = [
+    { label: "Dias na Jornada", value: "7", icon: Flame, trend: "+3" },
+    { label: "Saúde Score", value: "82", icon: Activity, trend: "+5" },
+    { label: "Economia", value: "R$ 450", icon: TrendingUp, trend: "+12%" },
   ];
 
   return (
-    <div className="min-h-screen bg-background safe-top safe-bottom">
+    <div className="min-h-screen bg-background safe-top pb-24">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container flex items-center justify-between h-16 px-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Olá,</p>
-            <h1 className="text-lg font-display font-semibold">
-              {profile?.full_name || "Bem-vindo"}
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            {/* Streak badge */}
-            <div className="badge-streak">
-              <Flame className="h-4 w-4 text-orange-500" />
-              <span>7 dias</span>
-            </div>
-            
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/app/configuracoes")}
-              className="text-muted-foreground"
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
-          </div>
+      <header className="bg-primary text-primary-foreground">
+        <div className="container px-4 py-6">
+          <p className="text-primary-foreground/80 text-sm">Olá,</p>
+          <h1 className="text-2xl font-display font-bold">
+            {profile?.full_name || "Bem-vindo"}
+          </h1>
+          <p className="text-primary-foreground/70 text-sm mt-1">
+            Sua jornada está no caminho certo
+          </p>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container px-4 py-6 pb-24">
-        {/* Welcome Section */}
-        <section className="mb-6">
-          <h2 className="text-2xl font-display font-bold mb-2">
-            Sua jornada continua
-          </h2>
-          <p className="text-muted-foreground">
-            Escolha uma área para explorar hoje
-          </p>
+      <main className="container px-4 -mt-4">
+        {/* Quick Stats */}
+        <section className="grid grid-cols-3 gap-3 mb-6">
+          {quickStats.map((stat, index) => (
+            <Card key={index} className="card-premium">
+              <CardContent className="p-4 text-center">
+                <stat.icon className="h-5 w-5 mx-auto mb-2 text-primary" />
+                <p className="text-lg font-bold text-foreground">{stat.value}</p>
+                <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+                <span className="text-[10px] text-success font-medium">{stat.trend}</span>
+              </CardContent>
+            </Card>
+          ))}
         </section>
 
-        {/* Quick Access Modules */}
-        <section className="mb-6">
-          <div className="grid grid-cols-4 gap-3">
-            {quickModules.map((module) => (
-              <button
-                key={module.id}
-                onClick={() => navigate(module.path)}
-                className="flex flex-col items-center p-3 rounded-xl bg-card border border-border hover:bg-muted/50 transition-colors"
-              >
-                <module.icon className={`h-6 w-6 mb-2 ${module.color}`} />
-                <span className="text-xs font-medium text-center">{module.label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Three Hubs */}
+        {/* Main Modules */}
         <section className="space-y-4">
-          {/* A JORNADA */}
+          {/* A Jornada */}
           <button
             onClick={() => navigate("/app/jornada")}
-            className="w-full hub-card hub-card-journey group"
+            className="w-full module-card module-card-journey group text-left"
           >
             <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
-              <Compass className="h-24 w-24" />
+              <Compass className="h-20 w-20" />
             </div>
             
             <div className="relative z-10">
@@ -102,18 +70,18 @@ export default function AppHome() {
                 <Compass className="h-6 w-6" />
               </div>
               
-              <h3 className="text-2xl font-display font-bold mb-2">
+              <h3 className="text-xl font-display font-bold mb-1">
                 A Jornada
               </h3>
-              <p className="text-white/80 mb-4">
-                Trilha dos 12 passos para sua transformação
+              <p className="text-white/80 text-sm mb-4">
+                12 passos para sua transformação
               </p>
               
-              {/* Progress indicator */}
+              {/* Progress */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-white rounded-full transition-all duration-500"
+                    className="h-full bg-white rounded-full"
                     style={{ width: "25%" }}
                   />
                 </div>
@@ -127,13 +95,13 @@ export default function AppHome() {
             </div>
           </button>
 
-          {/* TERAPIA */}
+          {/* Saúde */}
           <button
-            onClick={() => navigate("/app/terapia")}
-            className="w-full hub-card hub-card-therapy group"
+            onClick={() => navigate("/app/saude")}
+            className="w-full module-card module-card-health group text-left"
           >
             <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
-              <Heart className="h-24 w-24" />
+              <Heart className="h-20 w-20" />
             </div>
             
             <div className="relative z-10">
@@ -141,16 +109,16 @@ export default function AppHome() {
                 <Heart className="h-6 w-6" />
               </div>
               
-              <h3 className="text-2xl font-display font-bold mb-2">
-                Terapia
+              <h3 className="text-xl font-display font-bold mb-1">
+                Saúde
               </h3>
-              <p className="text-white/80 mb-4">
-                Conecte-se com profissionais especializados
+              <p className="text-white/80 text-sm mb-3">
+                IA Nutricional e Treinos Personalizados
               </p>
               
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-sm">5 profissionais online</span>
+              <div className="flex items-center gap-4 text-sm text-white/80">
+                <span>🥗 Nutrição</span>
+                <span>🏋️ Treinos</span>
               </div>
             </div>
             
@@ -160,44 +128,46 @@ export default function AppHome() {
             </div>
           </button>
 
-          {/* CONSTRUÇÃO DE ROTINA */}
+          {/* Finanças */}
           <button
-            onClick={() => navigate("/app/rotina")}
-            className="w-full hub-card hub-card-routine group"
+            onClick={() => navigate("/app/financas")}
+            className="w-full module-card module-card-finance group text-left"
           >
             <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
-              <Calendar className="h-24 w-24" />
+              <Wallet className="h-20 w-20" />
             </div>
             
             <div className="relative z-10">
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
-                <Calendar className="h-6 w-6" />
+                <Wallet className="h-6 w-6" />
               </div>
               
-              <h3 className="text-2xl font-display font-bold mb-2">
-                Construção de Rotina
+              <h3 className="text-xl font-display font-bold mb-1">
+                Finanças
               </h3>
-              <p className="text-white/80 mb-4">
-                Organize sua vida com ferramentas práticas
+              <p className="text-white/80 text-sm mb-3">
+                Controle financeiro inteligente
               </p>
               
-              <div className="flex items-center gap-4 text-sm">
-                <span>💰 Finanças</span>
-                <span>🥗 Alimentação</span>
-                <span>🏃 Exercícios</span>
+              <div className="flex items-center gap-4 text-sm text-white/80">
+                <span>💰 Gastos</span>
+                <span>📊 Relatórios</span>
               </div>
             </div>
             
             <div className="absolute bottom-4 right-4 flex items-center gap-1 text-white/80">
-              <span className="text-sm">Planejar</span>
+              <span className="text-sm">Gerenciar</span>
               <ChevronRight className="h-4 w-4" />
             </div>
           </button>
         </section>
       </main>
 
-      {/* Floating AI Button */}
-      <FloatingAIButton />
+      {/* Bottom Navigation */}
+      <BottomNavigation />
+
+      {/* AI Chat */}
+      <AIChatPanel />
     </div>
   );
 }
