@@ -2,8 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const N8N_WEBHOOK_URL = "http://89.167.15.77:5678/rest/webhooks/chat-agente";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -11,14 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, webhookUrl, metadata } = await req.json();
-
-    if (!webhookUrl) {
-      return new Response(
-        JSON.stringify({ error: "webhookUrl is required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    const { message } = await req.json();
 
     if (!message) {
       return new Response(
@@ -27,18 +22,14 @@ serve(async (req) => {
       );
     }
 
-    console.log("Forwarding message to webhook:", webhookUrl);
+    console.log("Sending message to n8n webhook:", message);
 
-    const response = await fetch(webhookUrl, {
+    const response = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        message,
-        timestamp: new Date().toISOString(),
-        ...metadata,
-      }),
+      body: JSON.stringify({ message }),
     });
 
     let responseData;
@@ -50,7 +41,7 @@ serve(async (req) => {
       responseData = await response.text();
     }
 
-    console.log("Webhook response:", response.status, responseData);
+    console.log("n8n response:", response.status, responseData);
 
     return new Response(
       JSON.stringify({ 
