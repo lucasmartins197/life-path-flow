@@ -6,7 +6,8 @@ import {
   Activity,
   TrendingUp,
   Apple,
-  Flame
+  Flame,
+  Stethoscope
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,14 @@ export default function HealthHome() {
   ];
 
   const modules = [
+    { 
+      id: "therapy", 
+      title: "Corpo Clínico", 
+      description: "Psicólogos, psiquiatras e terapeutas",
+      icon: Stethoscope, 
+      path: "/app/terapia",
+      color: "bg-primary/10 text-primary"
+    },
     { 
       id: "nutrition", 
       title: "Nutrição", 
