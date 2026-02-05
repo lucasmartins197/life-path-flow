@@ -95,11 +95,37 @@ export default function Auth() {
         title: "Erro no cadastro",
         description: error.message,
       });
-    } else {
+      setIsLoading(false);
+      return;
+    }
+    
+    // Enviar dados para o webhook do n8n
+    try {
+      await fetch("http://localhost:5678/webhook/chat-agente", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          full_name: signupName,
+          email: signupEmail,
+        }),
+      });
+      
       toast({
         title: "Conta criada!",
-        description: "Verifique seu email para confirmar o cadastro.",
+        description: "Redirecionando para o app...",
       });
+      
+      // Redirecionar para a dashboard
+      navigate("/app", { replace: true });
+    } catch (webhookError) {
+      console.error("Erro ao enviar para webhook:", webhookError);
+      toast({
+        title: "Conta criada!",
+        description: "Redirecionando para o app...",
+      });
+      navigate("/app", { replace: true });
     }
     
     setIsLoading(false);
