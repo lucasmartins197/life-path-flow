@@ -13,7 +13,9 @@ import {
   Flame,
   Trophy
 } from "lucide-react";
-import { FloatingAIButton } from "@/components/FloatingAIButton";
+import { BottomNavigation } from "@/components/BottomNavigation";
+import { PortoSeguroButton } from "@/components/PortoSeguroButton";
+import { AIChatPanel } from "@/components/chat/AIChatPanel";
 
 interface JourneyStep {
   id: string;
@@ -238,7 +240,9 @@ export default function JourneysHome() {
         </section>
       </main>
 
-      <FloatingAIButton />
+      <BottomNavigation />
+      <PortoSeguroButton />
+      <AIChatPanel />
     </div>
   );
 }

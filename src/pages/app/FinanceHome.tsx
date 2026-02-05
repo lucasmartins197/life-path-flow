@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PortoSeguroButton } from "@/components/PortoSeguroButton";
 import { AIChatPanel } from "@/components/chat/AIChatPanel";
 import { useToast } from "@/hooks/use-toast";
 
@@ -277,6 +278,7 @@ export default function FinanceHome() {
       </main>
 
       <BottomNavigation />
+      <PortoSeguroButton />
       <AIChatPanel />
     </div>
   );

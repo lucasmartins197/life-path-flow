@@ -10,7 +10,9 @@ import {
   Calendar,
   MessageCircle
 } from "lucide-react";
-import { FloatingAIButton } from "@/components/FloatingAIButton";
+import { BottomNavigation } from "@/components/BottomNavigation";
+import { PortoSeguroButton } from "@/components/PortoSeguroButton";
+import { AIChatPanel } from "@/components/chat/AIChatPanel";
 import { useState } from "react";
 
 // Mock data - will be replaced with real data
@@ -214,7 +216,9 @@ export default function TherapyHome() {
         </section>
       </main>
 
-      <FloatingAIButton />
+      <BottomNavigation />
+      <PortoSeguroButton />
+      <AIChatPanel />
     </div>
   );
 }

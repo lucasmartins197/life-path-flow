@@ -20,7 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FloatingAIButton } from "@/components/FloatingAIButton";
+import { BottomNavigation } from "@/components/BottomNavigation";
+import { PortoSeguroButton } from "@/components/PortoSeguroButton";
+import { AIChatPanel } from "@/components/chat/AIChatPanel";
 import {
   ArrowLeft,
   Plus,
@@ -345,7 +347,9 @@ export default function CalendarHome() {
         </Card>
       </main>
 
-      <FloatingAIButton />
+      <BottomNavigation />
+      <PortoSeguroButton />
+      <AIChatPanel />
     </div>
   );
 }
