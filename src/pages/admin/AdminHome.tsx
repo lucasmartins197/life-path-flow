@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Users, 
   UserCheck, 
@@ -15,55 +18,65 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowUpRight,
-  ArrowDownRight
+  Download,
+  RefreshCw,
+  UserPlus
 } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
+  const { metrics, recentUsers, recentPayments, isLoading, refetch, downloadCSV } = useAdminDashboard();
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/auth");
   };
 
-  const metrics = [
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
+
+  const getInitials = (name: string | null) => {
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const metricsData = [
     { 
-      label: "Total Assinantes", 
-      value: "1,234", 
-      change: "+12%", 
-      trend: "up",
-      icon: Users 
+      label: "Total de Usuários", 
+      value: metrics.totalUsers.toLocaleString("pt-BR"),
+      icon: Users,
+      color: "text-primary"
     },
     { 
-      label: "MRR", 
-      value: "R$ 45.2k", 
-      change: "+8.5%", 
-      trend: "up",
-      icon: DollarSign 
+      label: "Receita Total", 
+      value: formatCurrency(metrics.totalRevenue),
+      icon: DollarSign,
+      color: "text-success"
     },
     { 
-      label: "Volume Consultas", 
-      value: "342", 
-      change: "+23%", 
-      trend: "up",
-      icon: Video 
+      label: "Consultas Realizadas", 
+      value: metrics.totalConsultations.toLocaleString("pt-BR"),
+      icon: Video,
+      color: "text-info"
     },
     { 
       label: "Profissionais Ativos", 
-      value: "45", 
-      change: "+3", 
-      trend: "up",
-      icon: UserCheck 
+      value: metrics.activeProfessionals.toLocaleString("pt-BR"),
+      icon: UserCheck,
+      color: "text-primary"
     },
-  ];
-
-  const recentTransactions = [
-    { type: "income", description: "Assinatura Premium - João S.", value: 29.90, date: "Hoje" },
-    { type: "income", description: "Sessão Terapia - Maria L.", value: 150.00, date: "Hoje" },
-    { type: "expense", description: "Repasse Pro - Dr. Carlos", value: -90.00, date: "Hoje" },
-    { type: "income", description: "Assinatura Basic - Pedro M.", value: 29.90, date: "Ontem" },
-    { type: "expense", description: "Repasse Pro - Dra. Ana", value: -60.00, date: "Ontem" },
   ];
 
   const adminModules = [
@@ -72,7 +85,6 @@ export default function AdminHome() {
       description: "Revisar e aprovar novos profissionais",
       icon: UserCheck,
       path: "/admin/profissionais",
-      badge: "3 pendentes"
     },
     { 
       title: "Conteúdo da Jornada", 
@@ -122,6 +134,14 @@ export default function AdminHome() {
             <Button 
               variant="ghost" 
               size="icon"
+              onClick={refetch}
+              className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10"
+            >
+              <RefreshCw className="h-5 w-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
               className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10"
             >
               <Settings className="h-5 w-5" />
@@ -142,96 +162,165 @@ export default function AdminHome() {
       <main className="container px-4 py-6">
         {/* Metrics Grid */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {metrics.map((metric, index) => (
+          {metricsData.map((metric, index) => (
             <Card key={index} className="metric-card">
               <div className="flex items-start justify-between mb-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <metric.icon className="h-5 w-5 text-primary" />
+                  <metric.icon className={`h-5 w-5 ${metric.color}`} />
                 </div>
-                <span className={`flex items-center gap-1 text-xs font-medium ${
-                  metric.trend === "up" ? "text-success" : "text-destructive"
-                }`}>
-                  {metric.trend === "up" ? (
-                    <ArrowUpRight className="h-3 w-3" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3" />
-                  )}
-                  {metric.change}
-                </span>
               </div>
-              <p className="metric-value">{metric.value}</p>
-              <p className="metric-label">{metric.label}</p>
+              {isLoading ? (
+                <>
+                  <Skeleton className="h-7 w-20 mb-1" />
+                  <Skeleton className="h-4 w-24" />
+                </>
+              ) : (
+                <>
+                  <p className="metric-value">{metric.value}</p>
+                  <p className="metric-label">{metric.label}</p>
+                </>
+              )}
             </Card>
           ))}
         </section>
 
-        {/* Financial Overview */}
+        {/* Data Section */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Entries/Exits Chart Placeholder */}
+          {/* Recent Users */}
           <Card className="card-premium">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-primary" />
-                Entradas vs Saídas
-              </CardTitle>
-              <CardDescription>Últimos 30 dias</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <UserPlus className="h-4 w-4 text-primary" />
+                  Últimos Cadastros
+                </CardTitle>
+                <CardDescription>Novos membros do Movimento</CardDescription>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="h-48 flex items-center justify-center bg-muted/30 rounded-xl">
-                <div className="text-center">
-                  <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground/50 mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    Gráfico de Entradas/Saídas
-                  </p>
-                  <div className="flex items-center justify-center gap-6 mt-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-success" />
-                      <span className="text-xs">Entradas: R$ 52.4k</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-destructive" />
-                      <span className="text-xs">Saídas: R$ 18.2k</span>
+            <CardContent className="space-y-3">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 p-2">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="flex-1">
+                      <Skeleton className="h-4 w-32 mb-1" />
+                      <Skeleton className="h-3 w-20" />
                     </div>
                   </div>
-                </div>
-              </div>
+                ))
+              ) : recentUsers.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Nenhum cadastro encontrado
+                </p>
+              ) : (
+                recentUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user.avatar_url || undefined} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                        {getInitials(user.full_name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {user.full_name || "Sem nome"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(user.created_at), {
+                          addSuffix: true,
+                          locale: ptBR,
+                        })}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-success">
+                      <ArrowUpRight className="h-3 w-3" />
+                      Novo
+                    </div>
+                  </div>
+                ))
+              )}
             </CardContent>
           </Card>
 
-          {/* Recent Transactions */}
+          {/* Recent Payments */}
           <Card className="card-premium">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-primary" />
                 Transações Recentes
               </CardTitle>
+              <CardDescription>Últimos pagamentos registrados</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {recentTransactions.map((tx, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50"
-                >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    tx.type === "income" ? "bg-success/10" : "bg-destructive/10"
-                  }`}>
-                    {tx.type === "income" ? (
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 p-2">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <div className="flex-1">
+                      <Skeleton className="h-4 w-32 mb-1" />
+                      <Skeleton className="h-3 w-20" />
+                    </div>
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                ))
+              ) : recentPayments.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Nenhum pagamento encontrado
+                </p>
+              ) : (
+                recentPayments.map((payment) => (
+                  <div
+                    key={payment.id}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center bg-success/10">
                       <TrendingUp className="h-4 w-4 text-success" />
-                    ) : (
-                      <TrendingDown className="h-4 w-4 text-destructive" />
-                    )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate capitalize">
+                        {payment.payment_type.replace("_", " ")}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(payment.created_at), {
+                          addSuffix: true,
+                          locale: ptBR,
+                        })}
+                      </p>
+                    </div>
+                    <p className="text-sm font-semibold text-success">
+                      {formatCurrency(Number(payment.amount))}
+                    </p>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{tx.description}</p>
-                    <p className="text-xs text-muted-foreground">{tx.date}</p>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Export Section */}
+        <section className="mb-8">
+          <Card className="card-premium border-dashed border-2 border-primary/20">
+            <CardContent className="py-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-primary" />
                   </div>
-                  <p className={`text-sm font-semibold ${
-                    tx.value > 0 ? "text-success" : "text-destructive"
-                  }`}>
-                    {tx.value > 0 ? "+" : ""}R$ {Math.abs(tx.value).toFixed(2)}
-                  </p>
+                  <div>
+                    <h3 className="font-semibold">Prontuário Consolidado</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Exporte a evolução completa de todos os pacientes
+                    </p>
+                  </div>
                 </div>
-              ))}
+                <Button onClick={downloadCSV} className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Exportar CSV
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </section>
@@ -254,11 +343,6 @@ export default function AdminHome() {
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                       <module.icon className="h-5 w-5 text-primary" />
                     </div>
-                    {module.badge && (
-                      <span className="text-xs bg-destructive text-destructive-foreground px-2 py-1 rounded-full">
-                        {module.badge}
-                      </span>
-                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
