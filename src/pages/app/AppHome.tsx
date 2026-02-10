@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { PortoSeguroButton } from "@/components/PortoSeguroButton";
 import { AIChatPanel } from "@/components/chat/AIChatPanel";
+import { DailyReportCard } from "@/components/daily-report/DailyReportCard";
 
 export default function AppHome() {
   const navigate = useNavigate();
@@ -41,6 +42,9 @@ export default function AppHome() {
 
       {/* Main Content */}
       <main className="container px-4 -mt-4">
+        {/* AI Daily Report */}
+        <DailyReportCard />
+
         {/* Quick Stats */}
         <section className="grid grid-cols-3 gap-3 mb-6">
           {quickStats.map((stat, index) => (
