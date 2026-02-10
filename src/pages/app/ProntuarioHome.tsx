@@ -13,6 +13,7 @@ import { AIChatPanel } from "@/components/chat/AIChatPanel";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { ProntuarioCharts } from "@/components/prontuario/ProntuarioCharts";
 import {
   FileText,
   Brain,
@@ -320,6 +321,10 @@ export default function ProntuarioHome() {
                 </div>
               </CardContent>
             </Card>
+
+
+            {/* Evolution Charts */}
+            <ProntuarioCharts />
 
             {/* Tabs with detailed data */}
             <Tabs defaultValue="geral" className="w-full">
