@@ -48,11 +48,15 @@ export function LawyerBookingDialog({ lawyer, open, onOpenChange }: LawyerBookin
     setIsLoading(true);
 
     try {
+      // LGPD: Store only masked CPF (last 4 digits) for data minimization
+      const rawCpf = patientCpf.replace(/\D/g, "");
+      const maskedCpf = `***.***.***-${rawCpf.slice(-2)}`;
+
       const { error } = await supabase.from("legal_consultations").insert({
         patient_id: user.id,
         lawyer_id: lawyer.user_id,
         patient_name: patientName.trim(),
-        patient_cpf: patientCpf.trim(),
+        patient_cpf: maskedCpf,
         patient_city: patientCity.trim(),
         debt_description: debtDescription.trim(),
         approximate_income: approximateIncome ? parseFloat(approximateIncome) : null,
