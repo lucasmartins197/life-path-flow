@@ -7,7 +7,8 @@ import {
   TrendingUp,
   Apple,
   Flame,
-  Stethoscope
+  Stethoscope,
+  Scale
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,6 +48,14 @@ export default function HealthHome() {
       icon: Dumbbell, 
       path: "/app/exercicios",
       color: "bg-blue-500/10 text-blue-600"
+    },
+    { 
+      id: "legal", 
+      title: "Apoio Jurídico", 
+      description: "Advogados especializados e simulador de dívidas",
+      icon: Scale, 
+      path: "/app/juridico",
+      color: "bg-primary/10 text-primary"
     },
   ];
 

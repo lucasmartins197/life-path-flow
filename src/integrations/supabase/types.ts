@@ -313,6 +313,36 @@ export type Database = {
         }
         Relationships: []
       }
+      debt_simulations: {
+        Row: {
+          ai_result: Json | null
+          created_at: string
+          debt_amount: number
+          id: string
+          interest_rate: number
+          monthly_income: number
+          user_id: string
+        }
+        Insert: {
+          ai_result?: Json | null
+          created_at?: string
+          debt_amount: number
+          id?: string
+          interest_rate: number
+          monthly_income: number
+          user_id: string
+        }
+        Update: {
+          ai_result?: Json | null
+          created_at?: string
+          debt_amount?: number
+          id?: string
+          interest_rate?: number
+          monthly_income?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       exercise_activities: {
         Row: {
           calories_per_minute: number | null
@@ -479,6 +509,116 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: []
+      }
+      lawyer_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          start_time: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          start_time: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          start_time?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lawyer_documents: {
+        Row: {
+          created_at: string
+          document_type: string
+          file_url: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_type?: string
+          file_url: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_type?: string
+          file_url?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      legal_consultations: {
+        Row: {
+          approximate_income: number | null
+          created_at: string
+          debt_description: string
+          id: string
+          lawyer_id: string
+          lgpd_consent: boolean
+          patient_city: string
+          patient_cpf: string
+          patient_id: string
+          patient_name: string
+          session_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approximate_income?: number | null
+          created_at?: string
+          debt_description: string
+          id?: string
+          lawyer_id: string
+          lgpd_consent?: boolean
+          patient_city: string
+          patient_cpf: string
+          patient_id: string
+          patient_name: string
+          session_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approximate_income?: number | null
+          created_at?: string
+          debt_description?: string
+          id?: string
+          lawyer_id?: string
+          lgpd_consent?: boolean
+          patient_city?: string
+          patient_cpf?: string
+          patient_id?: string
+          patient_name?: string
+          session_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_consultations_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -1224,7 +1364,7 @@ export type Database = {
         | "journey"
         | "routine"
       payment_status: "pending" | "completed" | "failed" | "refunded"
-      professional_type: "psiquiatra" | "psicologo" | "terapeuta"
+      professional_type: "psiquiatra" | "psicologo" | "terapeuta" | "advogado"
       risk_level: "baixo" | "moderado" | "alto" | "critico"
       session_status: "scheduled" | "in_progress" | "completed" | "cancelled"
       subscription_status: "active" | "cancelled" | "expired" | "pending"
@@ -1358,7 +1498,7 @@ export const Constants = {
       app_role: ["user", "professional", "admin"],
       notification_type: ["system", "session", "payment", "journey", "routine"],
       payment_status: ["pending", "completed", "failed", "refunded"],
-      professional_type: ["psiquiatra", "psicologo", "terapeuta"],
+      professional_type: ["psiquiatra", "psicologo", "terapeuta", "advogado"],
       risk_level: ["baixo", "moderado", "alto", "critico"],
       session_status: ["scheduled", "in_progress", "completed", "cancelled"],
       subscription_status: ["active", "cancelled", "expired", "pending"],
