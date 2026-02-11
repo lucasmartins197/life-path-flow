@@ -214,10 +214,21 @@ serve(async (req) => {
       parsed = { message: assistantContent, actions: [], suggestions: [] };
     }
 
-    // Execute actions
+    // Execute actions with strict table whitelist
+    const ALLOWED_TABLES = [
+      'nutrition_logs', 'exercise_logs', 'routine_days', 'finance_events',
+      'calendar_events', 'trail_progress', 'risk_signals', 'agent_messages',
+      'agent_memory', 'debt_simulations',
+    ];
+
     const executedActions: string[] = [];
-  if (parsed.actions && Array.isArray(parsed.actions)) {
+    if (parsed.actions && Array.isArray(parsed.actions)) {
       for (const action of parsed.actions as AgentAction[]) {
+        if (!ALLOWED_TABLES.includes(action.table)) {
+          console.warn(`Blocked AI attempt to access unauthorized table: ${action.table}`);
+          continue;
+        }
+
         try {
           const tableData: Record<string, unknown> = { ...action.data, user_id: user.id };
           
