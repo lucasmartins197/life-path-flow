@@ -238,6 +238,7 @@ export default function ProfessionalRegister() {
                     <SelectItem value="psicologo">Psicólogo(a)</SelectItem>
                     <SelectItem value="psiquiatra">Psiquiatra</SelectItem>
                     <SelectItem value="terapeuta">Terapeuta</SelectItem>
+                    <SelectItem value="advogado">Advogado(a)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
