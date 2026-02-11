@@ -19,8 +19,10 @@ import {
   DollarSign,
   Dumbbell,
   TrendingUp,
+  Scale,
   X
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   role: "user" | "assistant";
@@ -60,10 +62,17 @@ const quickActions: QuickAction[] = [
     icon: TrendingUp, 
     prompt: "Como está meu progresso na jornada?" 
   },
+  { 
+    id: "legal", 
+    label: "Apoio Jurídico", 
+    icon: Scale, 
+    prompt: "Preciso de ajuda com uma dívida" 
+  },
 ];
 
 export function AIChatPanel() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -146,9 +155,18 @@ export function AIChatPanel() {
 
       const data = await response.json();
 
-      const assistantMessage = typeof data.data === 'string' 
+      let assistantMessage = typeof data.data === 'string' 
         ? data.data 
         : data.data?.message || data.data?.response || "Entendi! Posso ajudar com mais alguma coisa?";
+
+      // Extract navigate link if present
+      const navigateMatch = assistantMessage.match(/navigate:(\/\S+)/);
+      const navigatePath = data.data?.navigate || (navigateMatch ? navigateMatch[1] : null);
+      
+      // Clean navigate tag from displayed message
+      if (navigateMatch) {
+        assistantMessage = assistantMessage.replace(/navigate:\/\S+/g, '').trim();
+      }
 
       setMessages((prev) => [
         ...prev,
@@ -158,6 +176,18 @@ export function AIChatPanel() {
           timestamp: new Date(),
         },
       ]);
+
+      // Show navigate button if legal support was suggested
+      if (navigatePath) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: `__navigate__${navigatePath}`,
+            timestamp: new Date(),
+          },
+        ]);
+      }
     } catch (error) {
       console.error("Error:", error);
       setMessages((prev) => [
@@ -238,7 +268,21 @@ export function AIChatPanel() {
                       : "chat-message-assistant"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  {msg.content.startsWith("__navigate__") ? (
+                    <button
+                      onClick={() => {
+                        const path = msg.content.replace("__navigate__", "");
+                        setIsOpen(false);
+                        navigate(path);
+                      }}
+                      className="quick-action-btn text-sm"
+                    >
+                      <Scale className="h-4 w-4" />
+                      Ir para Apoio Jurídico →
+                    </button>
+                  ) : (
+                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  )}
                 </div>
                 <span className="text-[10px] text-muted-foreground mt-1 px-2">
                   {formatTime(msg.timestamp)}
