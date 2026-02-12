@@ -31,6 +31,7 @@ import ProfileHome from "./pages/app/ProfileHome";
 import EvolutionHome from "./pages/app/EvolutionHome";
 import ProntuarioHome from "./pages/app/ProntuarioHome";
 import LegalHome from "./pages/app/LegalHome";
+import FinancialSupportHome from "./pages/app/FinancialSupportHome";
 
 // Pro pages (PROFESSIONAL role)
 import ProHome from "./pages/pro/ProHome";
@@ -189,6 +190,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["user", "admin"]}>
                   <LegalHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app/apoio-financeiro"
+              element={
+                <ProtectedRoute allowedRoles={["user", "admin"]}>
+                  <FinancialSupportHome />
                 </ProtectedRoute>
               }
             />
