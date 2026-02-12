@@ -1072,6 +1072,48 @@ export type Database = {
         }
         Relationships: []
       }
+      recovery_scores: {
+        Row: {
+          calculated_at: string
+          created_at: string
+          exercise_score: number
+          id: string
+          journey_score: number
+          nutrition_score: number
+          routine_score: number
+          score: number
+          streak_bonus: number
+          therapy_score: number
+          user_id: string
+        }
+        Insert: {
+          calculated_at?: string
+          created_at?: string
+          exercise_score?: number
+          id?: string
+          journey_score?: number
+          nutrition_score?: number
+          routine_score?: number
+          score?: number
+          streak_bonus?: number
+          therapy_score?: number
+          user_id: string
+        }
+        Update: {
+          calculated_at?: string
+          created_at?: string
+          exercise_score?: number
+          id?: string
+          journey_score?: number
+          nutrition_score?: number
+          routine_score?: number
+          score?: number
+          streak_bonus?: number
+          therapy_score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       risk_signals: {
         Row: {
           alert_sent: boolean | null
@@ -1364,7 +1406,13 @@ export type Database = {
         | "journey"
         | "routine"
       payment_status: "pending" | "completed" | "failed" | "refunded"
-      professional_type: "psiquiatra" | "psicologo" | "terapeuta" | "advogado"
+      professional_type:
+        | "psiquiatra"
+        | "psicologo"
+        | "terapeuta"
+        | "advogado"
+        | "contador"
+        | "educador_financeiro"
       risk_level: "baixo" | "moderado" | "alto" | "critico"
       session_status: "scheduled" | "in_progress" | "completed" | "cancelled"
       subscription_status: "active" | "cancelled" | "expired" | "pending"
@@ -1498,7 +1546,14 @@ export const Constants = {
       app_role: ["user", "professional", "admin"],
       notification_type: ["system", "session", "payment", "journey", "routine"],
       payment_status: ["pending", "completed", "failed", "refunded"],
-      professional_type: ["psiquiatra", "psicologo", "terapeuta", "advogado"],
+      professional_type: [
+        "psiquiatra",
+        "psicologo",
+        "terapeuta",
+        "advogado",
+        "contador",
+        "educador_financeiro",
+      ],
       risk_level: ["baixo", "moderado", "alto", "critico"],
       session_status: ["scheduled", "in_progress", "completed", "cancelled"],
       subscription_status: ["active", "cancelled", "expired", "pending"],

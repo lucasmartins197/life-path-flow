@@ -8,13 +8,15 @@ import {
   ChevronRight,
   Flame,
   Activity,
-  Scale
+  Scale,
+  Wallet
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { PortoSeguroButton } from "@/components/PortoSeguroButton";
 import { AIChatPanel } from "@/components/chat/AIChatPanel";
 import { DailyReportCard } from "@/components/daily-report/DailyReportCard";
+import { RecoveryScoreCard } from "@/components/RecoveryScoreCard";
 
 export default function AppHome() {
   const navigate = useNavigate();
@@ -43,6 +45,9 @@ export default function AppHome() {
 
       {/* Main Content */}
       <main className="container px-4 -mt-4">
+        {/* Recovery Score */}
+        <RecoveryScoreCard />
+
         {/* AI Daily Report */}
         <DailyReportCard />
 
@@ -217,25 +222,45 @@ export default function AppHome() {
             <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
               <Scale className="h-20 w-20 text-white" />
             </div>
-            
             <div className="relative z-10">
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
                 <Scale className="h-6 w-6 text-white" />
               </div>
-              
-              <h3 className="text-xl font-display font-bold mb-1 text-white">
-                Apoio Jurídico
-              </h3>
-              <p className="text-white/80 text-sm mb-3">
-                Advogados especializados e simulador de dívidas
-              </p>
-              
+              <h3 className="text-xl font-display font-bold mb-1 text-white">Apoio Jurídico</h3>
+              <p className="text-white/80 text-sm mb-3">Advogados especializados e simulador de dívidas</p>
               <div className="flex items-center gap-4 text-sm text-white/80">
                 <span>⚖️ Consultas</span>
                 <span>📊 Simulador</span>
               </div>
             </div>
-            
+            <div className="absolute bottom-4 right-4 flex items-center gap-1 text-white/80">
+              <span className="text-sm">Acessar</span>
+              <ChevronRight className="h-4 w-4" />
+            </div>
+          </button>
+
+          {/* Apoio Financeiro */}
+          <button
+            onClick={() => navigate("/app/apoio-financeiro")}
+            className="w-full module-card group text-left"
+            style={{ 
+              background: "linear-gradient(135deg, hsl(145 60% 28%) 0%, hsl(170 50% 35%) 100%)" 
+            }}
+          >
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
+              <Wallet className="h-20 w-20 text-white" />
+            </div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
+                <Wallet className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-display font-bold mb-1 text-white">Apoio Financeiro</h3>
+              <p className="text-white/80 text-sm mb-3">Contadores e educadores financeiros</p>
+              <div className="flex items-center gap-4 text-sm text-white/80">
+                <span>📊 Planejamento</span>
+                <span>💰 Reorganização</span>
+              </div>
+            </div>
             <div className="absolute bottom-4 right-4 flex items-center gap-1 text-white/80">
               <span className="text-sm">Acessar</span>
               <ChevronRight className="h-4 w-4" />
