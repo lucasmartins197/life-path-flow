@@ -7,7 +7,8 @@ import {
   TrendingUp,
   ChevronRight,
   Flame,
-  Activity
+  Activity,
+  Scale
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/BottomNavigation";
@@ -201,6 +202,42 @@ export default function AppHome() {
             
             <div className="absolute bottom-4 right-4 flex items-center gap-1 text-white/80">
               <span className="text-sm">Ver Evolução</span>
+              <ChevronRight className="h-4 w-4" />
+            </div>
+          </button>
+
+          {/* Apoio Jurídico */}
+          <button
+            onClick={() => navigate("/app/juridico")}
+            className="w-full module-card group text-left"
+            style={{ 
+              background: "linear-gradient(135deg, hsl(220 60% 30%) 0%, hsl(250 50% 40%) 100%)" 
+            }}
+          >
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
+              <Scale className="h-20 w-20 text-white" />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
+                <Scale className="h-6 w-6 text-white" />
+              </div>
+              
+              <h3 className="text-xl font-display font-bold mb-1 text-white">
+                Apoio Jurídico
+              </h3>
+              <p className="text-white/80 text-sm mb-3">
+                Advogados especializados e simulador de dívidas
+              </p>
+              
+              <div className="flex items-center gap-4 text-sm text-white/80">
+                <span>⚖️ Consultas</span>
+                <span>📊 Simulador</span>
+              </div>
+            </div>
+            
+            <div className="absolute bottom-4 right-4 flex items-center gap-1 text-white/80">
+              <span className="text-sm">Acessar</span>
               <ChevronRight className="h-4 w-4" />
             </div>
           </button>
