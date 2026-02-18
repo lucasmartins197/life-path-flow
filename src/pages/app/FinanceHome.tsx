@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  ArrowLeft,
-  Plus,
+import {
+  ChevronLeft,
   TrendingUp,
   TrendingDown,
+  Plus,
+  BarChart3,
   Wallet,
-  PiggyBank,
   CreditCard,
-  BarChart3
+  ArrowDownLeft,
+  ArrowUpRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -34,7 +33,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface Transaction {
   id: string;
-  type: "income" | "expense";
+  type: "income" | "expense" | "debt" | "payment";
   category: string;
   amount: number;
   description: string;
@@ -42,239 +41,211 @@ interface Transaction {
 }
 
 const categories = [
-  { id: "food", label: "Alimentação", icon: "🍔" },
-  { id: "transport", label: "Transporte", icon: "🚗" },
-  { id: "health", label: "Saúde", icon: "💊" },
-  { id: "entertainment", label: "Lazer", icon: "🎮" },
-  { id: "bills", label: "Contas", icon: "📄" },
-  { id: "other", label: "Outros", icon: "📦" },
+  { id: "food",          label: "Alimentação" },
+  { id: "transport",     label: "Transporte" },
+  { id: "health",        label: "Saúde" },
+  { id: "entertainment", label: "Lazer" },
+  { id: "bills",         label: "Contas" },
+  { id: "debt",          label: "Dívida" },
+  { id: "other",         label: "Outros" },
+];
+
+const typeConfig = {
+  income:  { label: "Entrada",    icon: ArrowDownLeft,  color: "text-primary",     bg: "bg-primary/10" },
+  expense: { label: "Saída",      icon: ArrowUpRight,   color: "text-destructive", bg: "bg-destructive/10" },
+  debt:    { label: "Dívida",     icon: CreditCard,     color: "text-warning",     bg: "bg-warning/10" },
+  payment: { label: "Pagamento",  icon: TrendingDown,   color: "text-primary",     bg: "bg-primary/10" },
+};
+
+const QUICK_ACTIONS: { type: Transaction["type"]; label: string }[] = [
+  { type: "income",  label: "+ Entrada" },
+  { type: "expense", label: "+ Saída" },
+  { type: "debt",    label: "+ Dívida" },
+  { type: "payment", label: "+ Pagamento" },
 ];
 
 export default function FinanceHome() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState<Transaction["type"] | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: "1", type: "income", category: "other", amount: 3500, description: "Salário", date: new Date() },
-    { id: "2", type: "expense", category: "food", amount: 150, description: "Mercado", date: new Date() },
-    { id: "3", type: "expense", category: "transport", amount: 80, description: "Combustível", date: new Date() },
+    { id: "1", type: "income",  category: "other",    amount: 3500, description: "Salário",     date: new Date() },
+    { id: "2", type: "expense", category: "food",     amount: 150,  description: "Mercado",     date: new Date() },
+    { id: "3", type: "debt",    category: "bills",    amount: 800,  description: "Cartão Nubank", date: new Date() },
+    { id: "4", type: "expense", category: "transport", amount: 80,  description: "Combustível",  date: new Date() },
   ]);
-  const [newTransaction, setNewTransaction] = useState({
-    type: "expense" as "income" | "expense",
-    category: "food",
-    amount: "",
-    description: "",
-  });
+  const [newTx, setNewTx] = useState({ category: "other", amount: "", description: "" });
 
-  const totalIncome = transactions.filter(t => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
-  const totalExpenses = transactions.filter(t => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
-  const balance = totalIncome - totalExpenses;
+  const totalIncome  = transactions.filter((t) => t.type === "income"  || t.type === "payment").reduce((s, t) => s + t.amount, 0);
+  const totalExpense = transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+  const totalDebt    = transactions.filter((t) => t.type === "debt").reduce((s, t) => s + t.amount, 0);
+  const balance      = totalIncome - totalExpense - totalDebt;
 
-  const handleAddTransaction = async () => {
-    if (!newTransaction.amount || !newTransaction.description) {
-      toast({
-        title: "Preencha todos os campos",
-        variant: "destructive",
-      });
+  const addTransaction = () => {
+    if (!newTx.amount || !newTx.description || !dialogType) {
+      toast({ title: "Preencha todos os campos", variant: "destructive" });
       return;
     }
-
-    const transaction: Transaction = {
+    setTransactions([{
       id: Date.now().toString(),
-      type: newTransaction.type,
-      category: newTransaction.category,
-      amount: parseFloat(newTransaction.amount),
-      description: newTransaction.description,
+      type: dialogType,
+      category: newTx.category,
+      amount: parseFloat(newTx.amount),
+      description: newTx.description,
       date: new Date(),
-    };
-
-    // Send to n8n webhook
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/webhook-forwarder`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: `Registro financeiro: ${newTransaction.type === "expense" ? "Gasto" : "Entrada"} de R$ ${newTransaction.amount} - ${newTransaction.description} (${newTransaction.category})`,
-          }),
-        }
-      );
-      console.log("Webhook response:", response.status);
-    } catch (error) {
-      console.error("Webhook error:", error);
-    }
-
-    setTransactions([transaction, ...transactions]);
-    setIsDialogOpen(false);
-    setNewTransaction({ type: "expense", category: "food", amount: "", description: "" });
-    
-    toast({
-      title: "Transação registrada!",
-      description: `${newTransaction.type === "expense" ? "Gasto" : "Entrada"} de R$ ${newTransaction.amount}`,
-    });
+    }, ...transactions]);
+    setDialogType(null);
+    setNewTx({ category: "other", amount: "", description: "" });
+    toast({ title: "Registrado!", description: newTx.description });
   };
 
+  const fmtBRL = (v: number) =>
+    v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <header className="bg-finance text-finance-foreground">
-        <div className="container px-4 py-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate("/app")}
-              className="text-white/80 hover:text-white hover:bg-white/10"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-display font-bold">Finanças</h1>
-              <p className="text-finance-foreground/70 text-sm">
-                Controle seus gastos
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-background safe-top pb-28">
+
+      {/* ── Header ──────────────────────────────── */}
+      <header className="bg-card border-b border-border/60 px-5 pt-8 pb-5">
+        <div className="max-w-lg mx-auto">
+          <button
+            onClick={() => navigate("/app")}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors mb-5 text-sm"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Home
+          </button>
+          <h1 className="text-2xl font-bold text-foreground">Controle de Caixa</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Finanças pessoais</p>
         </div>
       </header>
 
-      <main className="container px-4 -mt-4">
-        {/* Balance Card */}
-        <Card className="card-premium mb-6">
-          <CardContent className="p-5">
-            <div className="text-center mb-4">
-              <p className="text-sm text-muted-foreground">Saldo do Mês</p>
-              <p className={`text-3xl font-bold ${balance >= 0 ? "text-success" : "text-destructive"}`}>
-                R$ {balance.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-              </p>
+      <main className="max-w-lg mx-auto px-5 pt-6 space-y-6">
+
+        {/* ── Saldo estimado ────────────────────── */}
+        <div className="card-premium p-5">
+          <p className="section-title mb-1">Saldo estimado</p>
+          <p className={`text-3xl font-bold tracking-tight ${balance >= 0 ? "text-foreground" : "text-destructive"}`}>
+            {fmtBRL(balance)}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {balance >= 0 ? "Situação positiva este mês" : "Atenção: despesas superam entradas"}
+          </p>
+
+          <div className="grid grid-cols-3 gap-3 mt-5">
+            {/* Entradas */}
+            <div className="rounded-xl bg-accent p-3">
+              <TrendingUp className="h-4 w-4 text-primary mb-2" />
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Entradas</p>
+              <p className="text-sm font-bold text-primary mt-0.5">{fmtBRL(totalIncome)}</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-success/10">
-                <TrendingUp className="h-5 w-5 text-success" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Entradas</p>
-                  <p className="font-semibold text-success">
-                    R$ {totalIncome.toLocaleString("pt-BR")}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-destructive/10">
-                <TrendingDown className="h-5 w-5 text-destructive" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Saídas</p>
-                  <p className="font-semibold text-destructive">
-                    R$ {totalExpenses.toLocaleString("pt-BR")}
-                  </p>
-                </div>
-              </div>
+            {/* Saídas */}
+            <div className="rounded-xl bg-destructive/10 p-3">
+              <TrendingDown className="h-4 w-4 text-destructive mb-2" />
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Saídas</p>
+              <p className="text-sm font-bold text-destructive mt-0.5">{fmtBRL(totalExpense)}</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <div className="flex gap-3 mb-6">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex-1 btn-premium-primary">
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Nova Transação</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant={newTransaction.type === "expense" ? "default" : "outline"}
-                    onClick={() => setNewTransaction({ ...newTransaction, type: "expense" })}
-                    className="w-full"
-                  >
-                    <TrendingDown className="h-4 w-4 mr-2" />
-                    Gasto
-                  </Button>
-                  <Button
-                    variant={newTransaction.type === "income" ? "default" : "outline"}
-                    onClick={() => setNewTransaction({ ...newTransaction, type: "income" })}
-                    className="w-full"
-                  >
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Entrada
-                  </Button>
-                </div>
-
-                <Input
-                  placeholder="Valor (R$)"
-                  type="number"
-                  value={newTransaction.amount}
-                  onChange={(e) => setNewTransaction({ ...newTransaction, amount: e.target.value })}
-                  className="input-premium"
-                />
-
-                <Input
-                  placeholder="Descrição"
-                  value={newTransaction.description}
-                  onChange={(e) => setNewTransaction({ ...newTransaction, description: e.target.value })}
-                  className="input-premium"
-                />
-
-                <Select
-                  value={newTransaction.category}
-                  onValueChange={(value) => setNewTransaction({ ...newTransaction, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.icon} {cat.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Button className="w-full" onClick={handleAddTransaction}>
-                  Registrar
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+            {/* Dívidas */}
+            <div className="rounded-xl bg-warning/10 p-3">
+              <CreditCard className="h-4 w-4 text-warning mb-2" />
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Dívidas</p>
+              <p className="text-sm font-bold text-warning mt-0.5">{fmtBRL(totalDebt)}</p>
+            </div>
+          </div>
         </div>
 
-        {/* Transactions */}
-        <Card className="card-premium">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-primary" />
-              Últimas Transações
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {transactions.map((transaction) => {
-              const category = categories.find(c => c.id === transaction.category);
-              return (
-                <div
-                  key={transaction.id}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-muted/50"
-                >
-                  <span className="text-xl">{category?.icon || "📦"}</span>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{transaction.description}</p>
-                    <p className="text-xs text-muted-foreground">{category?.label}</p>
+        {/* ── Quick actions ─────────────────────── */}
+        <div className="grid grid-cols-2 gap-3">
+          {QUICK_ACTIONS.map((qa) => {
+            const cfg = typeConfig[qa.type];
+            const Icon = cfg.icon;
+            return (
+              <Dialog key={qa.type} open={dialogType === qa.type} onOpenChange={(open) => !open && setDialogType(null)}>
+                <DialogTrigger asChild>
+                  <button
+                    onClick={() => setDialogType(qa.type)}
+                    className="card-premium p-3.5 flex items-center gap-3 text-left hover:scale-[1.01] active:scale-[0.99] transition-transform"
+                  >
+                    <div className={`w-9 h-9 rounded-lg ${cfg.bg} flex items-center justify-center shrink-0`}>
+                      <Icon className={`h-4 w-4 ${cfg.color}`} />
+                    </div>
+                    <span className="text-sm font-semibold text-foreground">{qa.label}</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-sm mx-auto rounded-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Nova {cfg.label}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-2">
+                    <Input
+                      placeholder="Valor (R$)"
+                      type="number"
+                      value={newTx.amount}
+                      onChange={(e) => setNewTx({ ...newTx, amount: e.target.value })}
+                      className="input-premium"
+                    />
+                    <Input
+                      placeholder="Descrição"
+                      value={newTx.description}
+                      onChange={(e) => setNewTx({ ...newTx, description: e.target.value })}
+                      className="input-premium"
+                    />
+                    <Select value={newTx.category} onValueChange={(v) => setNewTx({ ...newTx, category: v })}>
+                      <SelectTrigger className="input-premium border-border">
+                        <SelectValue placeholder="Categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <button onClick={addTransaction} className="btn-cta w-full py-3.5">
+                      Registrar
+                    </button>
                   </div>
-                  <p className={`font-semibold ${transaction.type === "expense" ? "text-destructive" : "text-success"}`}>
-                    {transaction.type === "expense" ? "-" : "+"}R$ {transaction.amount.toLocaleString("pt-BR")}
+                </DialogContent>
+              </Dialog>
+            );
+          })}
+        </div>
+
+        {/* ── Transactions table ────────────────── */}
+        <section>
+          <p className="section-title flex items-center gap-2">
+            <BarChart3 className="h-3.5 w-3.5" />
+            Últimas transações
+          </p>
+          <div className="card-premium divide-y divide-border/50">
+            {transactions.length === 0 && (
+              <div className="p-10 text-center">
+                <Wallet className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+                <p className="text-sm text-muted-foreground">Nenhuma transação registrada.</p>
+              </div>
+            )}
+            {transactions.map((t) => {
+              const cfg = typeConfig[t.type];
+              const Icon = cfg.icon;
+              const cat = categories.find((c) => c.id === t.category);
+              const isPositive = t.type === "income" || t.type === "payment";
+              return (
+                <div key={t.id} className="flex items-center gap-4 px-4 py-3.5">
+                  <div className={`w-9 h-9 rounded-lg ${cfg.bg} flex items-center justify-center shrink-0`}>
+                    <Icon className={`h-4 w-4 ${cfg.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">{t.description}</p>
+                    <p className="text-xs text-muted-foreground">{cat?.label} · {cfg.label}</p>
+                  </div>
+                  <p className={`text-sm font-bold shrink-0 ${isPositive ? "text-primary" : t.type === "debt" ? "text-warning" : "text-destructive"}`}>
+                    {isPositive ? "+" : "-"}{fmtBRL(t.amount)}
                   </p>
                 </div>
               );
             })}
-          </CardContent>
-        </Card>
+          </div>
+        </section>
+
       </main>
 
       <BottomNavigation />
