@@ -2,11 +2,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Compass, Stethoscope, Calendar, TrendingUp, Scale } from "lucide-react";
 
 const navItems = [
-  { id: "jornada", label: "Jornada", icon: Compass, path: "/app/jornada" },
-  { id: "terapia", label: "Terapia", icon: Stethoscope, path: "/app/terapia" },
-  { id: "rotina", label: "Rotina", icon: Calendar, path: "/app/rotina" },
-  { id: "juridico", label: "Jurídico", icon: Scale, path: "/app/juridico" },
-  { id: "evolucao", label: "Evolução", icon: TrendingUp, path: "/app/evolucao" },
+  { id: "jornada", label: "Jornada",  icon: Compass,      path: "/app/jornada" },
+  { id: "terapia", label: "Terapia",  icon: Stethoscope,  path: "/app/terapia" },
+  { id: "rotina",  label: "Rotina",   icon: Calendar,     path: "/app/rotina" },
+  { id: "juridico", label: "Jurídico", icon: Scale,       path: "/app/juridico" },
+  { id: "evolucao", label: "Evolução", icon: TrendingUp,  path: "/app/evolucao" },
 ];
 
 export function BottomNavigation() {
@@ -23,18 +23,23 @@ export function BottomNavigation() {
   return (
     <nav className="bottom-nav">
       <div className="bottom-nav-content">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => navigate(item.path)}
-            className={`bottom-nav-item ${isActive(item.path) ? "active" : ""}`}
-          >
-            <div className="nav-icon-bg">
-              <item.icon className="h-5 w-5" />
-            </div>
-            <span className="text-xs font-medium">{item.label}</span>
-          </button>
-        ))}
+        {navItems.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <button
+              key={item.id}
+              onClick={() => navigate(item.path)}
+              className={`bottom-nav-item ${active ? "active" : ""}`}
+            >
+              <div className="nav-icon-bg">
+                <item.icon className={`h-[18px] w-[18px] ${active ? "stroke-[2.2]" : "stroke-[1.6]"}`} />
+              </div>
+              <span className={`text-[10px] font-medium tracking-tight ${active ? "text-primary" : "text-muted-foreground"}`}>
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </nav>
   );

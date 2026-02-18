@@ -2,16 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  ArrowLeft, 
-  CheckCircle2, 
-  Circle, 
-  Lock, 
+import {
+  ChevronLeft,
+  CheckCircle2,
+  Lock,
   Play,
-  Flame,
-  Trophy
+  Trophy,
+  Clock,
 } from "lucide-react";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { PortoSeguroButton } from "@/components/PortoSeguroButton";
@@ -24,7 +21,6 @@ interface JourneyStep {
   description: string;
   duration_minutes: number;
 }
-
 interface TrailProgress {
   step_id: string;
   is_completed: boolean;
@@ -38,206 +34,148 @@ export default function JourneysHome() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      if (!user) return;
-
-      // Fetch journey steps
-      const { data: stepsData } = await supabase
-        .from("journey_steps")
-        .select("*")
-        .eq("is_published", true)
-        .order("step_number");
-
-      if (stepsData) {
-        setSteps(stepsData);
-      }
-
-      // Fetch user progress
-      const { data: progressData } = await supabase
-        .from("trail_progress")
-        .select("step_id, is_completed")
-        .eq("user_id", user.id);
-
-      if (progressData) {
-        setProgress(progressData);
-      }
-
+    if (!user) return;
+    (async () => {
+      const [{ data: s }, { data: p }] = await Promise.all([
+        supabase.from("journey_steps").select("*").eq("is_published", true).order("step_number"),
+        supabase.from("trail_progress").select("step_id, is_completed").eq("user_id", user.id),
+      ]);
+      if (s) setSteps(s);
+      if (p) setProgress(p);
       setIsLoading(false);
-    }
-
-    fetchData();
+    })();
   }, [user]);
 
-  const getStepStatus = (stepId: string, stepNumber: number) => {
-    const stepProgress = progress.find((p) => p.step_id === stepId);
-    
-    if (stepProgress?.is_completed) {
-      return "completed";
-    }
-    
-    // Check if previous steps are completed
-    const previousSteps = steps.filter((s) => s.step_number < stepNumber);
-    const allPreviousCompleted = previousSteps.every((ps) =>
-      progress.some((p) => p.step_id === ps.id && p.is_completed)
-    );
-    
-    if (allPreviousCompleted || stepNumber === 1) {
-      return "available";
-    }
-    
-    return "locked";
+  const getStatus = (step: JourneyStep) => {
+    if (progress.find((p) => p.step_id === step.id && p.is_completed)) return "completed";
+    const prev = steps.filter((s) => s.step_number < step.step_number);
+    const allDone = prev.every((ps) => progress.some((p) => p.step_id === ps.id && p.is_completed));
+    return allDone || step.step_number === 1 ? "available" : "locked";
   };
 
   const completedCount = progress.filter((p) => p.is_completed).length;
-  const progressPercentage = steps.length > 0 
-    ? Math.round((completedCount / steps.length) * 100) 
-    : 0;
+  const pct = steps.length > 0 ? Math.round((completedCount / steps.length) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-background safe-top safe-bottom">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container flex items-center h-16 px-4">
-          <Button
-            variant="ghost"
-            size="icon"
+    <div className="min-h-screen bg-background safe-top pb-28">
+
+      {/* ── Header ──────────────────────────────── */}
+      <header className="bg-card border-b border-border/60 px-5 pt-8 pb-5">
+        <div className="max-w-lg mx-auto">
+          <button
             onClick={() => navigate("/app")}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors mb-5 text-sm"
           >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="ml-3 text-lg font-display font-semibold">
-            A Jornada
-          </h1>
+            <ChevronLeft className="h-4 w-4" />
+            Home
+          </button>
+          <h1 className="text-2xl font-bold text-foreground">A Jornada</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Trilha de 12 passos</p>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container px-4 py-6 pb-24">
-        {/* Progress Overview */}
-        <section className="mb-8">
-          <Card className="bg-gradient-to-br from-primary to-primary/80 text-white border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-2xl font-display font-bold">
-                    Trilha dos 12 Passos
-                  </h2>
-                  <p className="text-white/80">
-                    Sua jornada de transformação
-                  </p>
-                </div>
-                <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-                  <Trophy className="h-8 w-8" />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Progresso</span>
-                  <span>{completedCount}/{steps.length} passos</span>
-                </div>
-                <div className="h-3 bg-white/20 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-white rounded-full transition-all duration-500"
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-4 mt-4">
-                <div className="flex items-center gap-2">
-                  <Flame className="h-5 w-5 text-orange-300" />
-                  <span className="text-sm">7 dias de streak</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+      <main className="max-w-lg mx-auto px-5 pt-6 space-y-6">
 
-        {/* Steps List */}
+        {/* ── Progress card ─────────────────────── */}
+        <div className="card-premium p-5">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+              <Trophy className="h-6 w-6 text-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-foreground">{completedCount} / {steps.length || 12} passos concluídos</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Trilha dos 12 Passos</p>
+            </div>
+            <span className="text-2xl font-bold text-foreground">{pct}%</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${pct}%` }} />
+          </div>
+        </div>
+
+        {/* ── Steps list ────────────────────────── */}
         <section>
-          <h3 className="text-lg font-display font-semibold mb-4">
-            Os 12 Passos
-          </h3>
-          
+          <p className="section-title">Seus passos</p>
+
           {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="skeleton h-24 rounded-2xl" />
-              ))}
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => <div key={i} className="skeleton h-20 rounded-2xl" />)}
+            </div>
+          ) : steps.length === 0 ? (
+            <div className="card-premium p-10 text-center">
+              <p className="text-muted-foreground text-sm">
+                Nenhum passo disponível. O administrador ainda não publicou o conteúdo.
+              </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-2">
               {steps.map((step) => {
-                const status = getStepStatus(step.id, step.step_number);
-                
+                const status = getStatus(step);
+                const isLocked = status === "locked";
+                const isDone = status === "completed";
                 return (
-                  <Card 
+                  <button
                     key={step.id}
-                    className={`card-premium cursor-pointer transition-all ${
-                      status === "locked" ? "opacity-60" : ""
+                    disabled={isLocked}
+                    onClick={() => !isLocked && navigate(`/app/jornada/${step.step_number}`)}
+                    className={`w-full card-premium p-4 flex items-center gap-4 text-left transition-all ${
+                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.01] active:scale-[0.99]"
                     }`}
-                    onClick={() => {
-                      if (status !== "locked") {
-                        navigate(`/app/jornada/${step.step_number}`);
-                      }
-                    }}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <div className={`
-                          w-12 h-12 rounded-full flex items-center justify-center shrink-0
-                          ${status === "completed" 
-                            ? "bg-primary text-primary-foreground" 
-                            : status === "available"
-                            ? "bg-primary/10 text-primary"
-                            : "bg-muted text-muted-foreground"
-                          }
-                        `}>
-                          {status === "completed" ? (
-                            <CheckCircle2 className="h-6 w-6" />
-                          ) : status === "locked" ? (
-                            <Lock className="h-5 w-5" />
-                          ) : (
-                            <span className="text-lg font-bold">{step.step_number}</span>
-                          )}
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold">
-                              Passo {step.step_number}
-                            </h4>
-                            {status === "available" && (
-                              <span className="text-xs bg-accent text-accent-foreground px-2 py-0.5 rounded-full">
-                                Disponível
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-base font-medium text-foreground">
-                            {step.title}
-                          </p>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                            {step.description}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-2">
-                            ⏱️ {step.duration_minutes} minutos
-                          </p>
-                        </div>
-                        
+                    {/* Step indicator */}
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                      isDone
+                        ? "bg-primary text-primary-foreground"
+                        : isLocked
+                        ? "bg-secondary text-muted-foreground"
+                        : "bg-secondary text-foreground"
+                    }`}>
+                      {isDone
+                        ? <CheckCircle2 className="h-5 w-5" />
+                        : isLocked
+                        ? <Lock className="h-4 w-4" />
+                        : <span className="text-sm font-bold">{step.step_number}</span>
+                      }
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                          Passo {step.step_number}
+                        </span>
                         {status === "available" && (
-                          <Button size="icon" variant="ghost" className="shrink-0">
-                            <Play className="h-5 w-5 text-primary" />
-                          </Button>
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-accent text-accent-foreground uppercase tracking-wide">
+                            Disponível
+                          </span>
+                        )}
+                        {isDone && (
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wide">
+                            Concluído
+                          </span>
                         )}
                       </div>
-                    </CardContent>
-                  </Card>
+                      <p className="font-semibold text-foreground text-sm truncate">{step.title}</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Clock className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">{step.duration_minutes} min</span>
+                      </div>
+                    </div>
+
+                    {!isLocked && (
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                        isDone ? "bg-primary/10 text-primary" : "bg-secondary text-foreground"
+                      }`}>
+                        <Play className="h-4 w-4" />
+                      </div>
+                    )}
+                  </button>
                 );
               })}
             </div>
           )}
         </section>
+
       </main>
 
       <BottomNavigation />

@@ -3,387 +3,354 @@
 @tailwind utilities;
 
 /* ============================================
-   MOVIMENTO APOSTANDO NA VIDA - DESIGN SYSTEM
-   Calm & Professional Theme (Azul Petróleo + Cinza Ardósia)
+   APOSTANDO NA VIDA — DESIGN SYSTEM
+   Premium · Institutional · Minimal
+   Palette: Off-white + Slate + Green accent
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap');
 
 @layer base {
   :root {
-    /* Background & Surface Colors - Clean whites */
-    --background: 210 20% 98%; /* #F8FAFB */
-    --foreground: 215 25% 17%; /* #1F2937 Slate gray */
-    
+    /* --- Backgrounds --- */
+    --background: 40 20% 97%;       /* #F8F7F5 warm off-white */
+    --foreground: 220 20% 12%;      /* #181C24 near black */
+
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 17%;
-    
+    --card-foreground: 220 20% 12%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 17%;
-    
-    /* Primary - Petrol Blue / Teal */
-    --primary: 192 70% 28%; /* #155E75 Petrol blue */
+    --popover-foreground: 220 20% 12%;
+
+    /* --- Primary: deep forest green (CTAs only) --- */
+    --primary: 154 50% 28%;         /* #236B43 */
     --primary-foreground: 0 0% 100%;
-    
-    /* Secondary - Slate Gray */
-    --secondary: 215 16% 93%; /* #E5E7EB */
-    --secondary-foreground: 215 25% 27%;
-    
-    /* Muted - Light gray backgrounds */
-    --muted: 210 16% 96%;
-    --muted-foreground: 215 16% 47%; /* #6B7280 */
-    
-    /* Accent - Soft teal highlight */
-    --accent: 192 70% 95%;
-    --accent-foreground: 192 70% 28%;
-    
-    /* Destructive */
-    --destructive: 0 72% 51%;
+
+    /* --- Secondary: light gray surface --- */
+    --secondary: 220 14% 93%;       /* #ECEDF0 */
+    --secondary-foreground: 220 14% 35%;
+
+    /* --- Muted: subtle fills --- */
+    --muted: 220 14% 95%;
+    --muted-foreground: 220 12% 52%;
+
+    /* --- Accent: very light green tint (non-CTA highlights) --- */
+    --accent: 154 40% 94%;
+    --accent-foreground: 154 50% 22%;
+
+    /* --- Destructive: discrete red --- */
+    --destructive: 4 72% 44%;
     --destructive-foreground: 0 0% 100%;
-    
-    /* Utility Colors */
-    --border: 214 14% 89%; /* #D1D5DB */
-    --input: 214 14% 89%;
-    --ring: 192 70% 28%;
-    
-    --radius: 0.75rem;
-    
-    /* Sidebar */
+
+    /* --- Utility --- */
+    --border: 220 12% 88%;
+    --input: 220 12% 88%;
+    --ring: 154 50% 28%;
+
+    --radius: 0.625rem;
+
+    /* --- Sidebar (unused but required) --- */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 215 25% 17%;
-    --sidebar-primary: 192 70% 28%;
+    --sidebar-foreground: 220 20% 12%;
+    --sidebar-primary: 154 50% 28%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 192 70% 95%;
-    --sidebar-accent-foreground: 192 70% 28%;
-    --sidebar-border: 214 14% 89%;
-    --sidebar-ring: 192 70% 28%;
-    
-    /* Semantic colors */
-    --success: 160 84% 39%; /* Teal green */
+    --sidebar-accent: 154 40% 94%;
+    --sidebar-accent-foreground: 154 50% 22%;
+    --sidebar-border: 220 12% 88%;
+    --sidebar-ring: 154 50% 28%;
+
+    /* --- Semantic --- */
+    --success: 154 50% 28%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 38 88% 48%;
     --warning-foreground: 0 0% 100%;
-    --info: 199 89% 48%;
+    --info: 210 80% 44%;
     --info-foreground: 0 0% 100%;
-    
-    /* Module-specific colors */
-    --journey: 192 70% 28%; /* Petrol blue */
+
+    /* --- Module tokens (neutral, no color gimmicks) --- */
+    --journey: 220 20% 18%;
     --journey-foreground: 0 0% 100%;
-    
-    --health: 160 84% 39%; /* Teal green */
+    --health: 154 50% 28%;
     --health-foreground: 0 0% 100%;
-    
-    --finance: 215 25% 37%; /* Slate */
+    --finance: 220 18% 22%;
     --finance-foreground: 0 0% 100%;
-    
-    --therapy: 192 70% 28%;
+    --therapy: 220 20% 18%;
     --therapy-foreground: 0 0% 100%;
-    
-    --routine: 215 25% 37%;
+    --routine: 220 20% 15%;
     --routine-foreground: 0 0% 100%;
-    
-    /* Shadows - Subtle */
-    --shadow-sm: 0 1px 2px 0 hsl(215 25% 17% / 0.03);
-    --shadow-md: 0 4px 6px -1px hsl(215 25% 17% / 0.05), 0 2px 4px -2px hsl(215 25% 17% / 0.03);
-    --shadow-lg: 0 10px 15px -3px hsl(215 25% 17% / 0.05), 0 4px 6px -4px hsl(215 25% 17% / 0.03);
-    --shadow-xl: 0 20px 25px -5px hsl(215 25% 17% / 0.06), 0 8px 10px -6px hsl(215 25% 17% / 0.03);
-    --shadow-card: 0 1px 3px 0 hsl(215 25% 17% / 0.02), 0 1px 2px -1px hsl(215 25% 17% / 0.02);
-    --shadow-card-hover: 0 4px 12px 0 hsl(215 25% 17% / 0.06), 0 2px 4px -2px hsl(215 25% 17% / 0.02);
+
+    /* --- Shadows (subtle) --- */
+    --shadow-xs:  0 1px 2px hsl(220 20% 12% / 0.04);
+    --shadow-sm:  0 1px 3px hsl(220 20% 12% / 0.06);
+    --shadow-md:  0 3px 8px  hsl(220 20% 12% / 0.07), 0 1px 2px hsl(220 20% 12% / 0.04);
+    --shadow-lg:  0 8px 20px hsl(220 20% 12% / 0.08), 0 2px 4px hsl(220 20% 12% / 0.04);
+    --shadow-card: 0 1px 4px hsl(220 20% 12% / 0.06);
+    --shadow-card-hover: 0 4px 14px hsl(220 20% 12% / 0.09);
   }
 
   .dark {
-    --background: 215 28% 9%; /* #0F172A */
-    --foreground: 210 40% 98%;
-    
-    --card: 215 28% 12%;
-    --card-foreground: 210 40% 98%;
-    
-    --popover: 215 28% 12%;
-    --popover-foreground: 210 40% 98%;
-    
-    --primary: 192 70% 45%;
+    --background: 220 22% 8%;
+    --foreground: 40 12% 94%;
+    --card: 220 20% 11%;
+    --card-foreground: 40 12% 94%;
+    --popover: 220 20% 11%;
+    --popover-foreground: 40 12% 94%;
+    --primary: 154 44% 40%;
     --primary-foreground: 0 0% 100%;
-    
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 210 40% 98%;
-    
-    --muted: 215 28% 17%;
-    --muted-foreground: 215 20% 65%;
-    
-    --accent: 192 70% 18%;
-    --accent-foreground: 192 70% 65%;
-    
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 192 70% 45%;
-    
-    --sidebar-background: 215 28% 9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 192 70% 45%;
+    --secondary: 220 18% 18%;
+    --secondary-foreground: 40 12% 80%;
+    --muted: 220 18% 16%;
+    --muted-foreground: 220 12% 55%;
+    --accent: 154 30% 18%;
+    --accent-foreground: 154 44% 70%;
+    --destructive: 4 60% 38%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 16% 20%;
+    --input: 220 16% 20%;
+    --ring: 154 44% 40%;
+    --sidebar-background: 220 22% 8%;
+    --sidebar-foreground: 40 12% 94%;
+    --sidebar-primary: 154 44% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 192 70% 18%;
-    --sidebar-accent-foreground: 192 70% 65%;
-    --sidebar-border: 215 28% 17%;
-    --sidebar-ring: 192 70% 45%;
+    --sidebar-accent: 154 30% 18%;
+    --sidebar-accent-foreground: 154 44% 70%;
+    --sidebar-border: 220 16% 20%;
+    --sidebar-ring: 154 44% 40%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    -webkit-tap-highlight-color: transparent;
   }
-  
+
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-  
-  body {
-    @apply bg-background text-foreground;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  
+
+  body {
+    @apply bg-background text-foreground;
+    letter-spacing: -0.01em;
+  }
+
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-    @apply font-semibold tracking-tight;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: "cv01", "cv02";
+    letter-spacing: -0.025em;
+    @apply font-semibold;
   }
 }
 
 @layer components {
-  /* Premium Card Style */
+
+  /* ── Cards ─────────────────────────────── */
   .card-premium {
-    @apply bg-card rounded-2xl border border-border/50;
+    @apply bg-card rounded-2xl border border-border/60;
     box-shadow: var(--shadow-card);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
   }
-  
   .card-premium:hover {
     box-shadow: var(--shadow-card-hover);
     transform: translateY(-1px);
   }
-  
-  /* Module Cards - Clean gradient style */
+
+  /* ── Module cards (dark, institutional) ── */
   .module-card {
-    @apply relative overflow-hidden rounded-2xl p-6 flex flex-col;
+    @apply relative overflow-hidden rounded-2xl p-6 flex flex-col min-h-[140px];
     box-shadow: var(--shadow-md);
-    transition: all 0.3s ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
-  
   .module-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
   }
-  
+
   .module-card-journey {
-    background: linear-gradient(135deg, hsl(192 70% 28%) 0%, hsl(192 70% 22%) 100%);
+    background: linear-gradient(140deg, hsl(220 22% 16%) 0%, hsl(220 22% 12%) 100%);
     @apply text-white;
   }
-  
   .module-card-health {
-    background: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 84% 32%) 100%);
+    background: linear-gradient(140deg, hsl(154 50% 24%) 0%, hsl(154 50% 18%) 100%);
     @apply text-white;
   }
-  
   .module-card-finance {
-    background: linear-gradient(135deg, hsl(215 25% 37%) 0%, hsl(215 25% 30%) 100%);
+    background: linear-gradient(140deg, hsl(220 18% 20%) 0%, hsl(220 18% 14%) 100%);
     @apply text-white;
   }
-  
-  /* Floating AI Button - Clinical style */
-  .fab-ai {
-    @apply fixed z-50 flex items-center justify-center;
-    @apply w-14 h-14 rounded-full bg-primary text-primary-foreground;
-    @apply shadow-lg hover:shadow-xl transition-all duration-300;
-    @apply hover:scale-105 active:scale-95;
-    bottom: calc(5rem + env(safe-area-inset-bottom, 0));
-    right: 1.5rem;
+  .module-card-routine {
+    background: linear-gradient(140deg, hsl(220 22% 14%) 0%, hsl(220 22% 8%) 100%);
+    @apply text-white;
   }
-  
-  /* Porto Seguro Button - Emergency fixed button */
-  .porto-seguro-btn {
-    @apply fixed z-50 flex items-center justify-center;
-    @apply w-14 h-14 rounded-full;
-    @apply shadow-lg hover:shadow-xl transition-all duration-300;
-    @apply hover:scale-105 active:scale-95;
-    background: linear-gradient(135deg, hsl(0 72% 51%) 0%, hsl(0 72% 40%) 100%);
-    color: white;
-    bottom: calc(5rem + env(safe-area-inset-bottom, 0));
-    left: 1.5rem;
+  .module-card-legal {
+    background: linear-gradient(140deg, hsl(220 30% 18%) 0%, hsl(220 30% 12%) 100%);
+    @apply text-white;
   }
-  
-  .porto-seguro-btn::before {
-    content: "";
-    @apply absolute inset-0 rounded-full animate-ping;
-    background: hsl(0 72% 51% / 0.3);
-    animation-duration: 2s;
-  }
-  
-  /* Bottom Navigation */
+
+  /* ── Bottom Navigation ──────────────────── */
   .bottom-nav {
     @apply fixed bottom-0 left-0 right-0 z-40;
-    @apply bg-card/95 backdrop-blur-lg border-t border-border;
+    @apply bg-card/[0.98] backdrop-blur-xl border-t border-border;
     @apply safe-bottom;
   }
-  
   .bottom-nav-content {
-    @apply flex items-center justify-around py-2 max-w-lg mx-auto;
+    @apply flex items-center justify-around py-1 max-w-lg mx-auto;
   }
-  
   .bottom-nav-item {
-    @apply flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-colors;
+    @apply flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl transition-all duration-150;
     @apply text-muted-foreground hover:text-foreground;
+    min-width: 56px;
   }
-  
   .bottom-nav-item.active {
     @apply text-primary;
   }
-  
   .bottom-nav-item.active .nav-icon-bg {
     @apply bg-primary/10;
   }
-  
   .nav-icon-bg {
     @apply w-10 h-10 rounded-xl flex items-center justify-center transition-colors;
   }
-  
-  /* Glass effect */
-  .glass {
-    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+
+  /* ── Fixed action buttons ───────────────── */
+  .fab-ai {
+    @apply fixed z-50 flex items-center justify-center;
+    @apply w-14 h-14 rounded-full bg-foreground text-background;
+    @apply shadow-lg hover:shadow-xl transition-all duration-200;
+    @apply hover:scale-105 active:scale-95;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom, 0));
+    right: 1.25rem;
   }
-  
-  /* Premium Input */
+
+  .porto-seguro-btn {
+    @apply fixed z-50 flex items-center justify-center;
+    @apply w-14 h-14 rounded-full;
+    @apply shadow-lg hover:shadow-xl transition-all duration-200;
+    @apply hover:scale-105 active:scale-95;
+    background: hsl(4 72% 44%);
+    color: white;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom, 0));
+    left: 1.25rem;
+  }
+  .porto-seguro-btn::before {
+    content: "";
+    @apply absolute inset-0 rounded-full;
+    background: hsl(4 72% 44% / 0.35);
+    animation: ring-pulse 2s ease-out infinite;
+  }
+
+  @keyframes ring-pulse {
+    0%   { transform: scale(1); opacity: 0.6; }
+    70%  { transform: scale(1.5); opacity: 0; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  /* ── Inputs ─────────────────────────────── */
   .input-premium {
     @apply w-full px-4 py-3 rounded-xl border border-border bg-background;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
-    @apply transition-all duration-200;
+    @apply text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary;
+    @apply transition-all duration-150 placeholder:text-muted-foreground;
   }
-  
-  /* Premium Button */
-  .btn-premium {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl;
-    @apply font-medium transition-all duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+
+  /* ── Buttons ────────────────────────────── */
+  .btn-cta {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl;
+    @apply bg-primary text-primary-foreground font-semibold text-sm;
+    @apply hover:bg-primary/90 active:scale-[0.98] transition-all duration-150;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2;
+    @apply shadow-sm;
   }
-  
-  .btn-premium-primary {
-    @apply btn-premium bg-primary text-primary-foreground;
-    @apply hover:bg-primary/90 focus:ring-primary;
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl;
+    @apply bg-secondary text-secondary-foreground font-medium text-sm;
+    @apply hover:bg-secondary/70 active:scale-[0.98] transition-all duration-150;
+    @apply focus:outline-none focus:ring-2 focus:ring-border focus:ring-offset-2;
   }
-  
-  .btn-premium-secondary {
-    @apply btn-premium bg-secondary text-secondary-foreground;
-    @apply hover:bg-secondary/80 focus:ring-secondary;
-  }
-  
-  /* Chat styles */
-  .chat-container {
-    @apply flex flex-col h-full bg-background;
-  }
-  
-  .chat-message {
-    @apply max-w-[85%] rounded-2xl px-4 py-3;
-  }
-  
-  .chat-message-user {
-    @apply bg-primary text-primary-foreground ml-auto;
-  }
-  
-  .chat-message-assistant {
-    @apply bg-muted text-foreground mr-auto;
-  }
-  
+
+  /* Keep legacy aliases */
+  .btn-premium { @apply btn-cta; }
+  .btn-premium-primary { @apply btn-cta; }
+  .btn-premium-secondary { @apply btn-secondary; }
+
+  /* ── Chat ───────────────────────────────── */
+  .chat-container { @apply flex flex-col h-full bg-background; }
+  .chat-message { @apply max-w-[85%] rounded-2xl px-4 py-3 text-sm; }
+  .chat-message-user { @apply bg-foreground text-background ml-auto; }
+  .chat-message-assistant { @apply bg-secondary text-foreground mr-auto; }
+
   .quick-action-btn {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full;
-    @apply bg-primary/10 text-primary text-sm font-medium;
-    @apply hover:bg-primary/20 transition-colors;
-    @apply border border-primary/20;
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium;
+    @apply bg-secondary text-foreground border border-border;
+    @apply hover:bg-secondary/70 transition-colors;
   }
-  
-  /* Metric Card */
+
+  /* ── Metric Cards ───────────────────────── */
   .metric-card {
     @apply bg-card rounded-2xl p-5 border border-border;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-xs);
   }
-  
-  .metric-value {
-    @apply text-2xl font-bold text-foreground;
+  .metric-value { @apply text-2xl font-bold tracking-tight text-foreground; }
+  .metric-label { @apply text-xs text-muted-foreground uppercase tracking-wide mt-0.5; }
+  .metric-change-positive { @apply text-primary text-xs font-semibold; }
+  .metric-change-negative { @apply text-destructive text-xs font-semibold; }
+
+  /* ── Progress bar ───────────────────────── */
+  .progress-bar { @apply h-1.5 rounded-full bg-secondary overflow-hidden; }
+  .progress-fill { @apply h-full rounded-full bg-primary transition-all duration-500; }
+
+  /* ── Status badge ───────────────────────── */
+  .badge-status {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
   }
-  
-  .metric-label {
-    @apply text-sm text-muted-foreground;
+  .badge-streak { @apply badge-status bg-accent text-accent-foreground; }
+
+  /* ── Skeleton ───────────────────────────── */
+  .skeleton { @apply animate-pulse bg-secondary rounded-xl; }
+
+  /* ── Page transition ────────────────────── */
+  .page-enter {
+    animation: page-in 0.25s ease-out both;
   }
-  
-  .metric-change-positive {
-    @apply text-success text-xs font-medium;
+  @keyframes page-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  
-  .metric-change-negative {
-    @apply text-destructive text-xs font-medium;
+
+  /* ── Section header ─────────────────────── */
+  .section-title {
+    @apply text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3;
   }
-  
-  /* Progress bar */
-  .progress-bar {
-    @apply h-2 rounded-full bg-secondary overflow-hidden;
+
+  /* ── Divider ────────────────────────────── */
+  .divider { @apply border-t border-border/60 my-4; }
+
+  /* ── Checklist row ──────────────────────── */
+  .checklist-row {
+    @apply flex items-center gap-4 py-3 border-b border-border/50 last:border-0;
+    @apply transition-colors cursor-pointer hover:bg-secondary/40 px-1 rounded-lg;
   }
-  
-  .progress-fill {
-    @apply h-full rounded-full bg-primary transition-all duration-500;
-  }
-  
-  /* Badge */
-  .badge-streak {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full;
-    @apply bg-accent text-accent-foreground text-sm font-medium;
-  }
-  
-  /* Page transitions */
-  .page-transition {
-    animation: fadeIn 0.3s ease-out;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* Skeleton loading */
-  .skeleton {
-    @apply animate-pulse bg-muted rounded-lg;
+  .checklist-row-checked { @apply bg-accent/40 hover:bg-accent/60; }
+
+  /* ── Glass ──────────────────────────────── */
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
   }
 }
 
 @layer utilities {
-  /* Safe area for mobile */
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-  
-  .safe-top {
-    padding-top: env(safe-area-inset-top, 0);
-  }
-  
-  /* Text gradient */
-  .text-gradient-primary {
-    @apply bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent;
-  }
-  
-  /* Hide scrollbar */
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
+  .safe-top    { padding-top:    env(safe-area-inset-top, 0); }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  .text-balance { text-wrap: balance; }
+
+  .font-display { font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.025em; }
 }
