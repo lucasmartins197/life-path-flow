@@ -15,6 +15,7 @@ import {
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { PortoSeguroButton } from "@/components/PortoSeguroButton";
 import { AIChatPanel } from "@/components/chat/AIChatPanel";
+import { RecoveryIndexCard } from "@/components/RecoveryIndexCard";
 
 // Simulated weekly data — will be replaced with real DB hook
 const weekDays = ["S", "T", "Q", "Q", "S", "S", "D"];
@@ -150,6 +151,12 @@ export default function AppHome() {
             <Compass className="h-4 w-4" />
             Minha Jornada
           </button>
+        </section>
+
+        {/* ── Índice de Recuperação ─────────────── */}
+        <section>
+          <p className="section-title">Índice de Recuperação</p>
+          <RecoveryIndexCard />
         </section>
 
         {/* ── Módulos principais ─── 3 grandes ────── */}
