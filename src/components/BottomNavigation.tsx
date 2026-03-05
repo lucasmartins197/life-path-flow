@@ -1,11 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Compass, Stethoscope, Calendar, TrendingUp, Scale } from "lucide-react";
+import { Compass, Stethoscope, Calendar, TrendingUp, Users } from "lucide-react";
 
 const navItems = [
   { id: "jornada", label: "Jornada",  icon: Compass,      path: "/app/jornada" },
   { id: "terapia", label: "Terapia",  icon: Stethoscope,  path: "/app/terapia" },
   { id: "rotina",  label: "Rotina",   icon: Calendar,     path: "/app/rotina" },
-  { id: "juridico", label: "Jurídico", icon: Scale,       path: "/app/juridico" },
+  { id: "comunidade", label: "Histórias", icon: Users,     path: "/app/comunidade" },
   { id: "evolucao", label: "Evolução", icon: TrendingUp,  path: "/app/evolucao" },
 ];
 
