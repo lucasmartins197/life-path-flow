@@ -265,6 +265,102 @@ export type Database = {
           },
         ]
       }
+      community_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean
+          message_type: string
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message_type?: string
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message_type?: string
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
+      community_rules_acceptance: {
+        Row: {
+          accepted_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_stories: {
+        Row: {
+          comment_count: number
+          content: string
+          created_at: string
+          id: string
+          is_flagged: boolean
+          is_published: boolean
+          journey_moment: string | null
+          photo_url: string | null
+          support_count: number
+          title: string
+          updated_at: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          comment_count?: number
+          content: string
+          created_at?: string
+          id?: string
+          is_flagged?: boolean
+          is_published?: boolean
+          journey_moment?: string | null
+          photo_url?: string | null
+          support_count?: number
+          title: string
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          comment_count?: number
+          content?: string
+          created_at?: string
+          id?: string
+          is_flagged?: boolean
+          is_published?: boolean
+          journey_moment?: string | null
+          photo_url?: string | null
+          support_count?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       daily_reports: {
         Row: {
           ai_recommendations: string[] | null
@@ -1243,6 +1339,70 @@ export type Database = {
         }
         Relationships: []
       }
+      story_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_flagged: boolean
+          story_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_flagged?: boolean
+          story_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_flagged?: boolean
+          story_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_comments_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "community_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_supports: {
+        Row: {
+          created_at: string
+          id: string
+          story_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          story_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          story_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_supports_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "community_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           cancelled_at: string | null
@@ -1356,6 +1516,33 @@ export type Database = {
           id?: string
           metadata?: Json | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_connections: {
+        Row: {
+          addressee_id: string
+          created_at: string
+          id: string
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          addressee_id: string
+          created_at?: string
+          id?: string
+          requester_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          addressee_id?: string
+          created_at?: string
+          id?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
