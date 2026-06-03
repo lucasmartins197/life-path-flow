@@ -55,6 +55,13 @@ export function ProtectedRoute({
   const isAdminBypass = user.id === ADMIN_BYPASS_ID;
 
   if (allowedRoles && allowedRoles.length > 0 && !isAdminBypass) {
+    if (roles.length === 0) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      );
+    }
     const hasRequiredRole = allowedRoles.some((role) => roles.includes(role));
     if (!hasRequiredRole) {
       if (roles.includes("admin")) return <Navigate to="/admin" replace />;
