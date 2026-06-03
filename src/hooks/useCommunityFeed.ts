@@ -246,14 +246,21 @@ export function useCommunityFeed() {
 
   const uploadPostVideo = async (file: File): Promise<string | null> => {
     if (!user) return null;
+    // Limite de 50MB
+    if (file.size > 50 * 1024 * 1024) {
+      toast({ title: "Vídeo muito grande", description: "O vídeo deve ter no máximo 50MB", variant: "destructive" });
+      return null;
+    }
     const ext = file.name.split(".").pop() || "mp4";
     const path = `${user.id}/${Date.now()}.${ext}`;
+    toast({ title: "Enviando vídeo...", description: "Aguarde, isso pode levar alguns segundos" });
     const { error } = await supabase.storage.from("post-videos").upload(path, file, { upsert: true, contentType: file.type });
     if (error) {
       toast({ title: "Erro ao enviar vídeo", description: error.message, variant: "destructive" });
       return null;
     }
     const { data } = supabase.storage.from("post-videos").getPublicUrl(path);
+    toast({ title: "Vídeo enviado!", variant: "default" });
     return data.publicUrl;
   };
 
