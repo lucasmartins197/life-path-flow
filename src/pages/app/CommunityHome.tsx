@@ -504,7 +504,7 @@ export default function CommunityHome() {
     supabase
       .from("community_rules_acceptance")
       .select("id")
-      .eq("user_id", user.id)
+      .eq("id", user.id)
       .maybeSingle()
       .then(({ data }) => setHasAcceptedRules(!!data));
   }, [user]);

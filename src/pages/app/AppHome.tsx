@@ -83,7 +83,7 @@ export default function AppHome() {
       const { data: ob } = await supabase
         .from("onboarding_clinico")
         .select("user_id")
-        .eq("user_id", user.id)
+        .eq("id", user.id)
         .maybeSingle();
 
       if (cancelled) return;
@@ -124,7 +124,7 @@ export default function AppHome() {
       const { data } = await supabase
         .from("routine_days")
         .select("date")
-        .eq("user_id", user!.id)
+        .eq("id", user!.id)
         .order("date", { ascending: false })
         .limit(60);
       return calcStreak(data?.map((d) => d.date) || []);

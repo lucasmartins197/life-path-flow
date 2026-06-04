@@ -175,7 +175,7 @@ export default function ProfileHome() {
       const [profileRes, patientRes, journeyRes] = await Promise.all([
         supabase.from("profiles")
           .select("full_name, avatar_url, city, bio, is_public, notifications_enabled, created_at, cpf, date_of_birth, phone, gender, zip_code, street, number, complement, neighborhood, state")
-          .eq("user_id", user.id)
+          .eq("id", user.id)
           .maybeSingle(),
         supabase.from("patient_profiles")
           .select("current_step, streak_days")
@@ -256,7 +256,7 @@ export default function ProfileHome() {
       const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
       const url = pub.publicUrl;
       const { error: updErr } = await supabase.from("profiles")
-        .update({ avatar_url: url }).eq("user_id", user.id);
+        .update({ avatar_url: url }).eq("id", user.id);
       if (updErr) throw updErr;
       setProfile((p) => (p ? { ...p, avatar_url: url } : p));
       toast({ title: "Foto atualizada" });
@@ -300,7 +300,7 @@ export default function ProfileHome() {
         complement: parsed.data.complement || null,
         neighborhood: parsed.data.neighborhood || null,
         state: parsed.data.state || null,
-      }).eq("user_id", user.id);
+      }).eq("id", user.id);
       if (error) throw error;
       setProfile((p) => p ? {
         ...p,
@@ -348,7 +348,7 @@ export default function ProfileHome() {
   async function toggleSetting(key: "is_public" | "notifications_enabled", value: boolean) {
     if (!user || !profile) return;
     setProfile({ ...profile, [key]: value });
-    const { error } = await supabase.from("profiles").update({ [key]: value }).eq("user_id", user.id);
+    const { error } = await supabase.from("profiles").update({ [key]: value }).eq("id", user.id);
     if (error) {
       setProfile({ ...profile, [key]: !value });
       toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -395,7 +395,7 @@ export default function ProfileHome() {
       await supabase.from("profiles").update({
         full_name: "Conta excluída",
         bio: null, city: null, avatar_url: null, is_public: false,
-      }).eq("user_id", user.id);
+      }).eq("id", user.id);
       await signOut();
       toast({ title: "Conta excluída", description: "Você foi desconectado." });
       navigate("/auth");

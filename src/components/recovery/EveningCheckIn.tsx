@@ -42,7 +42,7 @@ export function EveningCheckIn() {
       const { data } = await supabase
         .from("daily_reflections")
         .select("id, content")
-        .eq("user_id", user.id)
+        .eq("id", user.id)
         .gte("created_at", start.toISOString())
         .ilike("content", "[checkin-apostas]%")
         .limit(1);

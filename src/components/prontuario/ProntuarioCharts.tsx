@@ -39,7 +39,7 @@ export function ProntuarioCharts() {
       const { data } = await supabase
         .from("nutrition_logs")
         .select("logged_at, calories, protein, carbohydrates, fat")
-        .eq("user_id", user.id)
+        .eq("id", user.id)
         .gte("logged_at", thirtyDaysAgo.split("T")[0])
         .order("logged_at");
 
@@ -76,7 +76,7 @@ export function ProntuarioCharts() {
       const { data } = await supabase
         .from("exercise_logs")
         .select("logged_at, duration_minutes, calories_burned")
-        .eq("user_id", user.id)
+        .eq("id", user.id)
         .gte("logged_at", thirtyDaysAgo.split("T")[0])
         .order("logged_at");
 
@@ -107,7 +107,7 @@ export function ProntuarioCharts() {
       const { data } = await supabase
         .from("routine_days")
         .select("date, mood_rating")
-        .eq("user_id", user.id)
+        .eq("id", user.id)
         .gte("date", thirtyDaysAgo.split("T")[0])
         .not("mood_rating", "is", null)
         .order("date");

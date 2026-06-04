@@ -70,7 +70,7 @@ export default function SettingsHome() {
     const { data } = await supabase
       .from("profiles")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("id", user.id)
       .single();
 
     if (data) {
@@ -160,7 +160,7 @@ export default function SettingsHome() {
         city: formData.city,
         state: formData.state,
       })
-      .eq("user_id", user.id);
+      .eq("id", user.id);
 
     if (error) {
       toast({
