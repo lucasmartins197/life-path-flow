@@ -144,7 +144,7 @@ export default function Auth() {
               <Heart className="h-6 w-6" />
             </div>
             <h1 className="text-2xl lg:text-3xl font-display font-bold">
-              Apostando na Vida
+              Stake Real
             </h1>
           </div>
           

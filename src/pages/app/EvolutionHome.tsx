@@ -181,7 +181,7 @@ export default function EvolutionHome() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(120, 120, 120);
-    doc.text("Apostando na Vida", margin, y);
+    doc.text("Stake Real", margin, y);
     y += 10;
 
     doc.setTextColor(60, 60, 60);

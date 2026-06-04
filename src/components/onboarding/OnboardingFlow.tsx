@@ -399,10 +399,10 @@ function SplashScreen() {
       <div className="animate-scale-in flex flex-col items-center">
         <div className="h-28 w-28 rounded-full border-4 border-[hsl(var(--gold,40_60%_54%))] flex items-center justify-center mb-6 shadow-2xl">
           <span
-            className="text-6xl font-bold"
+            className="text-4xl font-bold"
             style={{ color: "#C9A84C", fontFamily: "Georgia, serif" }}
           >
-            A
+            SR
           </span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-white">Stake Real</h1>
