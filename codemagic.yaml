@@ -10,15 +10,14 @@ workflows:
         BUNDLE_ID: "com.apostandonavida.stakereal"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
+        VITE_SUPABASE_URL: "https://dmrlkxwpbwmzpdecsgnw.supabase.co"
+        VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_GrVvRKNeoFyX-QlBoBr8xw_Dura2nUZ"
       node: 20
     scripts:
       - name: Install dependencies
         script: npm install
       - name: Build web app
         script: npm run build
-        env:
-          VITE_SUPABASE_URL: https://dmrlkxwpbwmzpdecsgnw.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_GrVvRKNeoFyX-QlBoBr8xw_Dura2nUZ
       - name: Install Capacitor
         script: npm install @capacitor/core @capacitor/cli @capacitor/ios
       - name: Init Capacitor
@@ -31,7 +30,7 @@ workflows:
         script: |
           cd ios/App
           pod install
-      - name: Build iOS
+      - name: Build and archive
         script: |
           xcode-project use-profiles
           xcodebuild \
@@ -50,6 +49,7 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
-        auth: integration
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
-        submit_to_app_store: false
