@@ -66,7 +66,11 @@ export function FinanceOnboarding({ onComplete }: FinanceOnboardingProps) {
         interest_rate: parseFloat(d.interest_rate) || 0,
       })),
       goal,
-      goal_deadline: goalDeadline,
+      goal_deadline: goalDeadline ? (() => {
+        const d = new Date();
+        d.setMonth(d.getMonth() + parseInt(goalDeadline));
+        return d.toISOString().split('T')[0];
+      })() : null,
     });
   };
 
