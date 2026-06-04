@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 /** Admin/test user who bypasses every lock and shows every step completed. */
-export const ADMIN_BYPASS_USER_ID = "22222222-2222-2222-2222-222222222222";
+export const ADMIN_BYPASS_USER_ID = "60c8281c-eee0-48f2-9d31-d3002ce4eb14";
 
 /** Medal awarded when each step's task is auto-validated. */
 export const STEP_VALIDATION_MEDAL: Record<number, { id: string; name: string }> = {
