@@ -18,6 +18,8 @@ import AppHome from "./pages/app/AppHome";
 import JourneysHome from "./pages/app/JourneysHome";
 import JourneyStep from "./pages/app/JourneyStep";
 import TherapyHome from "./pages/app/TherapyHome";
+import TermosUso from "./pages/app/TermosUso";
+import Privacidade from "./pages/app/Privacidade";
 import RoutineHome from "./pages/app/RoutineHome";
 import NutritionHome from "./pages/app/NutritionHome";
 import ExerciseHome from "./pages/app/ExerciseHome";
@@ -73,6 +75,8 @@ const App = () => (
             <Route path="/app/jornada" element={<ProtectedRoute allowedRoles={["user", "admin"]}><JourneysHome /></ProtectedRoute>} />
             <Route path="/app/jornada/:stepNumber" element={<ProtectedRoute allowedRoles={["user", "admin"]}><JourneyStep /></ProtectedRoute>} />
             <Route path="/app/terapia" element={<ProtectedRoute allowedRoles={["user", "admin"]}><TherapyHome /></ProtectedRoute>} />
+            <Route path="/app/termos" element={<ProtectedRoute allowedRoles={["user", "admin"]}><TermosUso /></ProtectedRoute>} />
+            <Route path="/app/privacidade" element={<ProtectedRoute allowedRoles={["user", "admin"]}><Privacidade /></ProtectedRoute>} />
             <Route path="/app/rotina" element={<ProtectedRoute allowedRoles={["user", "admin"]}><RoutineHome /></ProtectedRoute>} />
             <Route path="/app/nutricao" element={<ProtectedRoute allowedRoles={["user", "admin"]}><NutritionHome /></ProtectedRoute>} />
             <Route path="/app/exercicios" element={<ProtectedRoute allowedRoles={["user", "admin"]}><ExerciseHome /></ProtectedRoute>} />

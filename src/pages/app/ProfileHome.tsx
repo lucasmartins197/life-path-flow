@@ -799,12 +799,12 @@ export default function ProfileHome() {
           <SettingLink
             icon={FileText}
             label="Política de Privacidade"
-            onClick={() => window.open("https://apostandonavida.com.br/privacidade", "_blank", "noopener")}
+            onClick={() => navigate("/app/privacidade")}
           />
           <SettingLink
             icon={FileText}
             label="Termos de Uso"
-            onClick={() => window.open("https://apostandonavida.com.br/termos", "_blank", "noopener")}
+            onClick={() => navigate("/app/termos")}
           />
           <SettingLink
             icon={Star}

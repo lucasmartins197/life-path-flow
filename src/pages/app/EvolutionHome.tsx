@@ -84,7 +84,7 @@ export default function EvolutionHome() {
   async function loadAll() {
     setLoading(true);
     const [profileRes, prontuariosRes, onboardingRes, journeyRes, checkinsRes, tasksRes, therapyRes, storiesRes] = await Promise.all([
-      supabase.from("profiles").select("full_name").eq("user_id", user!.id).maybeSingle(),
+      supabase.from("profiles").select("full_name").eq("id", user!.id).maybeSingle(),
       supabase.from("prontuarios").select("*").eq("user_id", user!.id).order("gerado_em", { ascending: false }),
       supabase.from("onboarding_clinico").select("*").eq("user_id", user!.id).maybeSingle(),
       supabase.from("journey_progress").select("step_number, completed").eq("user_id", user!.id),
