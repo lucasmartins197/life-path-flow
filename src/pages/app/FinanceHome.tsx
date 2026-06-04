@@ -89,7 +89,7 @@ export default function FinanceHome() {
         debts: data.debts,
         goal: data.goal,
         goal_deadline: data.goal_deadline,
-      });
+      }, { onConflict: "user_id" });
       if (error) throw error;
       setProfile({ ...data, user_id: user.id });
       setShowOnboarding(false);
