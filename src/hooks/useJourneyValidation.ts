@@ -23,7 +23,7 @@ export const STEP_VALIDATION_MEDAL: Record<number, { id: string; name: string }>
 
 /** Human label for the task each step requires. */
 export const STEP_TASK_LABEL: Record<number, string> = {
-  1:  "Preencher avatar e bio do seu perfil",
+  1:  "Preencher nome completo e cidade no perfil",
   2:  "Publicar 1 história em Histórias que Conectam",
   3:  "Cadastrar pelo menos 1 Contato Âncora",
   4:  "Registrar pelo menos 1 gatilho no Meu Escudo",
@@ -48,10 +48,10 @@ async function validateStep(stepNumber: number, userId: string): Promise<StepVal
     case 1: {
       const { data } = await supabase
         .from("profiles")
-        .select("avatar_url, bio")
-        .eq("user_id", userId)
+        .select("avatar_url, bio, full_name, city")
+        .eq("id", userId)
         .maybeSingle();
-      const done = !!data?.avatar_url && !!data?.bio && data.bio.trim() !== "";
+      const done = !!(data?.full_name && data.full_name.trim() !== "") && !!(data?.city && data.city.trim() !== "");
       return { done };
     }
     case 2: {
