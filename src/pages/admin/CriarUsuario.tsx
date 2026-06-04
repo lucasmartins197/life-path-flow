@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { BackHeader } from "@/components/BackHeader";
 import { Loader2 } from "lucide-react";
 
-const ADMIN_ID = "60c8281c-eee0-48f2-9d31-d3002ce4eb14";
+const ADMIN_ID = "f997e372-2a46-4e36-a75f-04b49af0aef2";
 
 export default function CriarUsuario() {
   const { user } = useAuth();
