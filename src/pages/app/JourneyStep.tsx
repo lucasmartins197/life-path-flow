@@ -304,19 +304,43 @@ export default function JourneyStep() {
 
   if (showCelebration) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1B4332, #2D6A4F)" }}>
-        <div className="text-center animate-scale-in px-6">
+      <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: "linear-gradient(135deg, #1B4332, #2D6A4F)" }}>
+        <div className="text-center animate-scale-in w-full max-w-sm">
+          {/* Medalha */}
           <div
-            className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center"
+            className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center"
             style={{ background: "linear-gradient(135deg, #C9A84C, #E8D590)", boxShadow: "0 0 40px rgba(201,168,76,0.5)" }}
           >
             <Award className="h-12 w-12 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Parabéns!</h1>
-          <p className="text-white/80 text-lg mb-1">Você conquistou a medalha</p>
-          <p className="text-xl font-bold flex items-center justify-center gap-2" style={{ color: "#E8D590" }}>
+          <h1 className="text-2xl font-bold text-white mb-1">Parabéns!</h1>
+          <p className="text-white/80 text-base mb-1">Você conquistou a medalha</p>
+          <p className="text-lg font-bold mb-6 flex items-center justify-center gap-2" style={{ color: "#E8D590" }}>
             <Award className="h-5 w-5" /> {step.medal}
           </p>
+
+          {/* Mensagem da Ana */}
+          <div className="rounded-2xl p-5 text-left" style={{ backgroundColor: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-10 w-10 rounded-full bg-[#F5F0E8] flex items-center justify-center shrink-0 overflow-hidden">
+                <svg viewBox="0 0 100 100" className="w-full h-full" aria-hidden>
+                  <circle cx="50" cy="50" r="50" fill="#F5F0E8" />
+                  <path d="M22 50 Q22 22 50 22 Q78 22 78 50 L78 60 Q70 50 50 50 Q30 50 22 60 Z" fill="#1B4332" />
+                  <ellipse cx="50" cy="58" rx="22" ry="26" fill="#E8C9A8" />
+                  <ellipse cx="42" cy="58" rx="2" ry="2.5" fill="#1B4332" />
+                  <ellipse cx="58" cy="58" rx="2" ry="2.5" fill="#1B4332" />
+                  <path d="M42 70 Q50 76 58 70" stroke="#1B4332" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-bold" style={{ color: "#C9A84C" }}>Ana</p>
+                <p className="text-xs text-white/60">Passo {stepNumber} — {step.name}</p>
+              </div>
+            </div>
+            <p className="text-sm leading-relaxed text-white/90 italic">
+              "{step.message}"
+            </p>
+          </div>
         </div>
       </div>
     );
