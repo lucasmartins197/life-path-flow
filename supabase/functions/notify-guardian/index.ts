@@ -214,15 +214,70 @@ Deno.serve(async (req) => {
       </div>`;
 
     } else if (type === "invite") {
-      whatsappMsg = `💚 *Stake Real*\n\nOlá ${toName}! ${fromName} te escolheu como Contato Âncora no app de recuperação Stake Real. Você receberá notificações para apoiá-lo(a) na jornada. Obrigado por fazer parte disso! 💚\n\n_Enviado automaticamente pelo app Stake Real_`;
-      emailSubject = `${fromName} te convidou para ser seu Contato Âncora`;
+      whatsappMsg = `💚 *${getGreeting()}, ${toName}!*
+
+Somos da *Stake Real*, plataforma de recuperação de ludopatia.
+
+*${fromName}* te escolheu como *Guardião(ã)* na jornada de recuperação dele(a). Isso significa que ele(a) confia em você e precisa do seu apoio! 🙏
+
+*O que você precisa fazer:*
+
+1️⃣ *Bloqueie os sites de apostas no celular dele(a)*
+   • iPhone: Ajustes → Tempo de Uso → Restrições de Conteúdo → Conteúdo Web → adicione os sites
+   • Android: Baixe o app "BlockSite" na Play Store
+
+2️⃣ *Defina uma senha que SÓ VOCÊ saiba*
+   Assim ele(a) não consegue desativar o bloqueio sozinho num momento de fraqueza
+
+3️⃣ *Esteja disponível*
+   Você receberá alertas automáticos se ${fromName} ficar inativo por 3 dias ou pedir ajuda urgente
+
+⚠️ *Importante:* Não compartilhe a senha de bloqueio com ${fromName}. Isso é fundamental para o tratamento funcionar.
+
+Obrigado por fazer parte dessa jornada! Você pode salvar alguém. 💚
+
+_Enviado automaticamente pelo app Stake Real_`;
+
+      emailSubject = `${fromName} precisa de você como Guardião — Stake Real`;
       emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-        <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
-        <h2 style="color:#1B4332">Olá, ${toName}!</h2>
-        <p><strong>${fromName}</strong> te escolheu como Contato Âncora no Stake Real.</p>
-        <ul><li>Receber alertas de inatividade</li><li>Pedidos de apoio urgente</li><li>Relatórios de progresso</li></ul>
-        <p>Seu apoio faz toda a diferença! 💚</p>
-        <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
+        <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px">
+          <h1 style="color:white;margin:0">Stake Real</h1>
+          <p style="color:rgba(255,255,255,0.8);margin:8px 0 0;font-size:14px">Plataforma de Recuperação de Ludopatia</p>
+        </div>
+        <h2 style="color:#1B4332">${getGreeting()}, ${toName}!</h2>
+        <p><strong>${fromName}</strong> te escolheu como <strong>Guardião(ã) Digital</strong> no app Stake Real. Isso significa que ele(a) confia em você para ajudar na recuperação do vício em apostas.</p>
+        
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:20px;margin:20px 0">
+          <h3 style="color:#1B4332;margin:0 0 12px">📋 O que você precisa fazer agora:</h3>
+          
+          <p style="color:#374151;font-weight:bold;margin:0 0 8px">1. Bloquear sites de apostas no celular de ${fromName}</p>
+          
+          <p style="color:#374151;margin:0 0 4px"><strong>📱 iPhone:</strong></p>
+          <ol style="color:#374151;margin:0 0 12px;padding-left:20px">
+            <li>Ajustes → Tempo de Uso</li>
+            <li>Restrições de Conteúdo e Privacidade → ativar</li>
+            <li>Restrições de Conteúdo → Conteúdo Web → Limitar sites adultos</li>
+            <li>Em "Nunca Permitir" adicione: bet365.com, betano.com, sportingbet.com, pixbet.com, blaze.com e outros</li>
+            <li>Defina uma senha de Tempo de Uso que <strong>SOMENTE VOCÊ</strong> saiba</li>
+          </ol>
+          
+          <p style="color:#374151;margin:0 0 4px"><strong>🤖 Android:</strong></p>
+          <ol style="color:#374151;margin:0 0 12px;padding-left:20px">
+            <li>Baixe o app <strong>BlockSite</strong> na Play Store (gratuito)</li>
+            <li>Adicione os sites de apostas na lista de bloqueio</li>
+            <li>Defina uma senha no BlockSite que <strong>SOMENTE VOCÊ</strong> saiba</li>
+          </ol>
+          
+          <p style="color:#374151;font-weight:bold;margin:0 0 8px">2. Esteja disponível</p>
+          <p style="color:#374151;margin:0">Você receberá notificações automáticas se ${fromName} ficar inativo ou pedir ajuda urgente.</p>
+        </div>
+        
+        <div style="background:#FEF3C7;border:1px solid #FCD34D;border-radius:12px;padding:16px;margin:16px 0">
+          <p style="color:#92400E;margin:0;font-weight:bold">⚠️ IMPORTANTE: Não compartilhe a senha de bloqueio com ${fromName}. Isso é fundamental para o tratamento funcionar.</p>
+        </div>
+        
+        <p style="color:#374151">Obrigado por fazer parte dessa jornada de recuperação. Você pode fazer uma diferença enorme na vida de ${fromName}! 💚</p>
+        <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real — contato@apostandonavida.com.br</p>
       </div>`;
     }
 
