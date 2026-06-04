@@ -1,0 +1,55 @@
+workflows:
+  ios-release:
+    name: iOS Release
+    max_build_duration: 60
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.apostandonavida.stakereal
+      vars:
+        BUNDLE_ID: "com.apostandonavida.stakereal"
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+      node: 20
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Build web app
+        script: npm run build
+        env:
+          VITE_SUPABASE_URL: https://dmrlkxwpbwmzpdecsgnw.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_GrVvRKNeoFyX-QlBoBr8xw_Dura2nUZ
+      - name: Install Capacitor
+        script: npm install @capacitor/core @capacitor/cli @capacitor/ios
+      - name: Init Capacitor
+        script: npx cap init "Stake Real" "com.apostandonavida.stakereal" --web-dir dist
+      - name: Add iOS platform
+        script: npx cap add ios
+      - name: Sync Capacitor
+        script: npx cap sync ios
+      - name: Install CocoaPods
+        script: |
+          cd ios/App
+          pod install
+      - name: Build iOS
+        script: |
+          xcode-project use-profiles
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath build/App.xcarchive \
+            archive
+      - name: Export IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace ios/App/App.xcworkspace \
+            --config Release
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
