@@ -260,28 +260,30 @@ export default function AnchorHome() {
 
   const handleSendUpdate = async () => {
     if (!anchor) return;
-    await notifyWebhook("update", {
-      guardian_name: anchor.name,
-      guardian_phone: anchor.phone,
-      guardian_email: anchor.email,
-      user_name: user?.user_metadata?.full_name || "Seu apoiado",
-    });
-    await logAlert("update", "Mensagem de atualização enviada");
-    toast.success("Mensagem enviada ao âncora");
+    // Abre WhatsApp do próprio usuário com mensagem pré-preenchida
+    const userName = user?.user_metadata?.full_name || "Seu apoiado";
+    const phone = anchor.phone.replace(/\D/g, "");
+    const message = encodeURIComponent(
+      `Olá ${anchor.name}! Sou ${userName} e estou usando o app Stake Real para me recuperar. Queria te dar uma atualização: estou bem e continuando minha jornada. Obrigado pelo seu apoio! 💚`
+    );
+    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+    await logAlert("update", "Mensagem de atualização enviada via WhatsApp");
+    toast.success("Abrindo WhatsApp...");
   };
 
   const handleEmergency = async () => {
     if (!anchor) return;
     setSendingEmergency(true);
     try {
-      await notifyWebhook("urgency", {
-        guardian_name: anchor.name,
-        guardian_phone: anchor.phone,
-        guardian_email: anchor.email,
-        user_name: user?.user_metadata?.full_name || "Seu apoiado",
-      });
-      await logAlert("emergency", "Pedido de apoio urgente");
-      toast.success("Seu âncora foi notificado. Ele vai entrar em contato em breve.");
+      // Abre WhatsApp do próprio usuário com mensagem de urgência
+      const userName = user?.user_metadata?.full_name || "Seu apoiado";
+      const phone = anchor.phone.replace(/\D/g, "");
+      const message = encodeURIComponent(
+        `🚨 ${anchor.name}, preciso de ajuda urgente! Estou com muita vontade de apostar e preciso do seu apoio agora. Por favor, me liga ou me manda mensagem o mais rápido possível. - ${userName}`
+      );
+      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+      await logAlert("emergency", "Pedido de apoio urgente enviado via WhatsApp");
+      toast.success("Abrindo WhatsApp para contato urgente...");
     } finally {
       setSendingEmergency(false);
       setConfirmEmergency(false);
