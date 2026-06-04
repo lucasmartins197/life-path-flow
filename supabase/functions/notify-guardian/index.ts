@@ -6,22 +6,79 @@ const corsHeaders = {
 };
 
 const RESEND_KEY = "re_eLRc8cwT_HZYSsQonMX3K1U1LZ3kby9k4";
+const ZAPI_URL = "https://api.z-api.io/instances/3F4251576B10F1BE557C9A7EE4F1867E/token/2D6CDE945D6DB4F275171067/send-text";
+
+async function sendWhatsApp(phone: string, message: string) {
+  try {
+    // Formatar número: remover tudo exceto dígitos, garantir código do país
+    let number = phone.replace(/\D/g, "");
+    if (!number.startsWith("55")) number = "55" + number;
+    
+    const res = await fetch(ZAPI_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: number, message }),
+    });
+    const data = await res.json();
+    console.log("Z-API response:", JSON.stringify(data));
+    return res.ok;
+  } catch (e) {
+    console.error("Z-API error:", e);
+    return false;
+  }
+}
 
 async function sendEmail(to: string, subject: string, html: string) {
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${RESEND_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "Stake Real <contato@apostandonavida.com.br>",
-      to: [to],
-      subject,
-      html,
-    }),
-  });
-  return res.ok;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Stake Real <contato@apostandonavida.com.br>",
+        to: [to],
+        subject,
+        html,
+      }),
+    });
+    return res.ok;
+  } catch (e) {
+    console.error("Email error:", e);
+    return false;
+  }
+}
+
+async function fetchUserReport(supabase: any, user_id: string) {
+  try {
+    const [profileRes, clinicRes, journeyRes, tasksRes, prontuarioRes] = await Promise.all([
+      supabase.from("profiles").select("full_name, city, gambling_duration, recovery_situation").eq("id", user_id).maybeSingle(),
+      supabase.from("onboarding_clinico").select("*").eq("user_id", user_id).maybeSingle(),
+      supabase.from("journey_progress").select("step_number, completed").eq("user_id", user_id),
+      supabase.from("daily_tasks").select("concluido, categoria").eq("user_id", user_id).gte("data", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]),
+      supabase.from("prontuarios").select("resumo_clinico, nivel_risco, recomendacoes").eq("user_id", user_id).order("gerado_em", { ascending: false }).limit(1).maybeSingle(),
+    ]);
+
+    const passos = journeyRes.data || [];
+    const tasks = tasksRes.data || [];
+    const passosCompletos = passos.filter((p: any) => p.completed).length;
+    const tarefasFeitas = tasks.filter((t: any) => t.concluido).length;
+    const totalTarefas = tasks.length;
+    const clinico = clinicRes.data;
+    const prontuario = prontuarioRes.data;
+
+    return {
+      passosCompletos,
+      tarefasFeitas,
+      totalTarefas,
+      clinico,
+      prontuario,
+    };
+  } catch (e) {
+    console.error("Error fetching report:", e);
+    return null;
+  }
 }
 
 Deno.serve(async (req) => {
@@ -43,145 +100,135 @@ Deno.serve(async (req) => {
     } = body;
 
     const toEmail = guardian_email || anchor_email;
+    const toPhone = guardian_phone;
     const toName = guardian_name || "Contato Âncora";
     const fromName = user_name || "Seu apoiado";
 
-    if (!toEmail) {
-      return new Response(JSON.stringify({ ok: false, error: "Email do âncora não informado" }), {
+    if (!toPhone && !toEmail) {
+      return new Response(JSON.stringify({ ok: false, error: "Telefone ou email do âncora não informado" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    let subject = "";
-    let html = "";
-
-    // Buscar dados do usuário se include_report ou user_id disponível
-    let reportHtml = "";
-    if (user_id && (include_report || type === "weekly_report" || type === "update")) {
-      try {
-        const supabase = createClient(
-          Deno.env.get("SUPABASE_URL")!,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-        );
-
-        const [profileRes, clinicRes, journeyRes, tasksRes, prontuarioRes] = await Promise.all([
-          supabase.from("profiles").select("full_name, city, gambling_duration, recovery_situation, gambling_free_since").eq("id", user_id).maybeSingle(),
-          supabase.from("onboarding_clinico").select("*").eq("user_id", user_id).maybeSingle(),
-          supabase.from("journey_progress").select("step_number, completed").eq("user_id", user_id),
-          supabase.from("daily_tasks").select("concluido, categoria").eq("user_id", user_id).gte("data", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]),
-          supabase.from("prontuarios").select("resumo_clinico, nivel_risco, recomendacoes").eq("user_id", user_id).order("gerado_em", { ascending: false }).limit(1).maybeSingle(),
-        ]);
-
-        const profile = profileRes.data;
-        const clinico = clinicRes.data;
-        const passos = journeyRes.data || [];
-        const tasks = tasksRes.data || [];
-        const prontuario = prontuarioRes.data;
-
-        const passosCompletos = passos.filter((p: any) => p.completed).length;
-        const tarefasFeitas = tasks.filter((t: any) => t.concluido).length;
-        const totalTarefas = tasks.length;
-
-        reportHtml = `
-          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:20px;margin:16px 0">
-            <h3 style="color:#1B4332;margin:0 0 12px">📊 Relatório de Progresso</h3>
-            <table style="width:100%;border-collapse:collapse">
-              <tr><td style="padding:4px 0;color:#374151;font-size:14px">✅ Passos concluídos</td><td style="text-align:right;font-weight:bold;color:#1B4332">${passosCompletos}/12</td></tr>
-              <tr><td style="padding:4px 0;color:#374151;font-size:14px">📅 Tarefas (7 dias)</td><td style="text-align:right;font-weight:bold;color:#1B4332">${tarefasFeitas}/${totalTarefas}</td></tr>
-              ${clinico?.main_motivation ? `<tr><td style="padding:4px 0;color:#374151;font-size:14px">💪 Motivação</td><td style="text-align:right;font-weight:bold;color:#1B4332">${clinico.main_motivation}</td></tr>` : ""}
-              ${clinico?.mental_health_risk ? `<tr><td style="padding:4px 0;color:#374151;font-size:14px">🧠 Estado emocional</td><td style="text-align:right;font-weight:bold;color:#1B4332">${clinico.mental_health_risk}</td></tr>` : ""}
-            </table>
-            ${prontuario?.resumo_clinico ? `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #BBF7D0"><p style="color:#374151;font-size:13px;margin:0"><strong>Avaliação clínica:</strong> ${prontuario.resumo_clinico.slice(0, 300)}...</p></div>` : ""}
-            ${prontuario?.nivel_risco ? `<p style="margin:8px 0 0;font-size:13px;color:#374151"><strong>Nível de risco:</strong> <span style="color:${prontuario.nivel_risco === 'critico' ? '#DC2626' : prontuario.nivel_risco === 'alto' ? '#D97706' : '#16A34A'}">${prontuario.nivel_risco.toUpperCase()}</span></p>` : ""}
-          </div>`;
-      } catch (e) {
-        console.error("Error fetching report data:", e);
-      }
+    // Buscar relatório se necessário
+    let report = null;
+    if (user_id && (include_report || type === "update" || type === "weekly_report" || type === "step_complete")) {
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      );
+      report = await fetchUserReport(supabase, user_id);
     }
 
-    if (type === "invite") {
-      subject = `${fromName} te convidou para ser seu Contato Âncora no Stake Real`;
-      html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-        <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
-        <h2 style="color:#1B4332">Olá, ${toName}!</h2>
-        <p><strong>${fromName}</strong> te escolheu como <strong>Contato Âncora</strong> no app Stake Real.</p>
-        <p>Como Contato Âncora, você receberá notificações quando:</p>
-        <ul><li>${fromName} ficar inativo por mais de 3 dias</li><li>Houver um pedido de apoio urgente</li><li>Um passo importante da jornada for concluído</li></ul>
-        <p>Seu apoio faz toda a diferença! 💚</p>
-        <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
-      </div>`;
+    let whatsappMsg = "";
+    let emailSubject = "";
+    let emailHtml = "";
 
-    } else if (type === "urgency" || type === "emergency") {
-      subject = `🚨 ${fromName} precisa do seu apoio AGORA`;
-      html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+    // Montar relatório em texto para WhatsApp
+    const reportText = report ? `\n\n📊 *Progresso esta semana:*\n✅ Passos concluídos: ${report.passosCompletos}/12\n📅 Tarefas: ${report.tarefasFeitas}/${report.totalTarefas}${report.clinico?.mental_health_risk ? `\n🧠 Estado emocional: ${report.clinico.mental_health_risk}` : ""}${report.prontuario?.nivel_risco ? `\n⚠️ Nível de risco: ${report.prontuario.nivel_risco.toUpperCase()}` : ""}` : "";
+
+    const reportHtml = report ? `
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:20px;margin:16px 0">
+        <h3 style="color:#1B4332;margin:0 0 12px">📊 Relatório de Progresso</h3>
+        <table style="width:100%;border-collapse:collapse">
+          <tr><td style="padding:4px 0;color:#374151;font-size:14px">✅ Passos concluídos</td><td style="text-align:right;font-weight:bold;color:#1B4332">${report.passosCompletos}/12</td></tr>
+          <tr><td style="padding:4px 0;color:#374151;font-size:14px">📅 Tarefas (7 dias)</td><td style="text-align:right;font-weight:bold;color:#1B4332">${report.tarefasFeitas}/${report.totalTarefas}</td></tr>
+          ${report.clinico?.mental_health_risk ? `<tr><td style="padding:4px 0;color:#374151;font-size:14px">🧠 Estado emocional</td><td style="text-align:right;font-weight:bold;color:#1B4332">${report.clinico.mental_health_risk}</td></tr>` : ""}
+          ${report.prontuario?.nivel_risco ? `<tr><td style="padding:4px 0;color:#374151;font-size:14px">⚠️ Nível de risco</td><td style="text-align:right;font-weight:bold;color:${report.prontuario.nivel_risco === 'critico' ? '#DC2626' : report.prontuario.nivel_risco === 'alto' ? '#D97706' : '#16A34A'}">${report.prontuario.nivel_risco.toUpperCase()}</td></tr>` : ""}
+        </table>
+        ${report.prontuario?.resumo_clinico ? `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #BBF7D0"><p style="color:#374151;font-size:13px;margin:0"><strong>Avaliação clínica:</strong> ${report.prontuario.resumo_clinico.slice(0, 400)}...</p></div>` : ""}
+      </div>` : "";
+
+    if (type === "urgency" || type === "emergency") {
+      whatsappMsg = `🚨 *ALERTA URGENTE — Stake Real*\n\n${toName}, ${fromName} está em situação de risco e precisa do seu apoio AGORA!\n\nPor favor, entre em contato imediatamente por ligação ou mensagem.\n\n_Enviado automaticamente pelo app Stake Real_`;
+      emailSubject = `🚨 ${fromName} precisa do seu apoio AGORA`;
+      emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
         <div style="background:#DC2626;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">⚠️ Pedido de Apoio Urgente</h1></div>
         <h2 style="color:#DC2626">Olá, ${toName}!</h2>
-        <p><strong>${fromName}</strong> está pedindo apoio urgente através do app Stake Real.</p>
-        <p>Por favor, entre em contato imediatamente por telefone ou WhatsApp.</p>
+        <p><strong>${fromName}</strong> está pedindo apoio urgente. Por favor, entre em contato imediatamente.</p>
         <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:16px;margin:16px 0"><p style="color:#991B1B;margin:0;font-weight:bold">Esta é uma situação de risco. Seu apoio pode fazer a diferença.</p></div>
         <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
       </div>`;
 
     } else if (type === "update") {
-      subject = `💚 Relatório de progresso de ${fromName} — Stake Real`;
-      html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+      whatsappMsg = `💚 *Atualização — Stake Real*\n\nOlá ${toName}! ${fromName} enviou uma atualização sobre sua jornada de recuperação.${reportText}\n\n_Enviado automaticamente pelo app Stake Real_`;
+      emailSubject = `💚 Relatório de progresso de ${fromName} — Stake Real`;
+      emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
         <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
         <h2 style="color:#1B4332">Olá, ${toName}!</h2>
-        <p><strong>${fromName}</strong> enviou uma atualização sobre sua jornada de recuperação.</p>
+        <p><strong>${fromName}</strong> enviou uma atualização sobre sua jornada.</p>
         ${reportHtml}
-        <p>Continue apoiando — você faz uma diferença enorme! 💚</p>
+        <p>Continue apoiando — você faz diferença! 💚</p>
         <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
       </div>`;
 
     } else if (type === "step_complete") {
-      subject = `🏆 ${fromName} concluiu um passo na jornada!`;
-      html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+      whatsappMsg = `🏆 *Conquista — Stake Real*\n\nOlá ${toName}! ${fromName} acabou de concluir mais um passo na jornada de recuperação! 🎉${reportText}\n\n_Enviado automaticamente pelo app Stake Real_`;
+      emailSubject = `🏆 ${fromName} concluiu um passo!`;
+      emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
         <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
         <h2 style="color:#1B4332">Olá, ${toName}!</h2>
-        <p>🎉 <strong>${fromName}</strong> acabou de concluir mais um passo na jornada de recuperação!</p>
+        <p>🎉 <strong>${fromName}</strong> concluiu mais um passo na jornada!</p>
         ${reportHtml}
-        <p>Seu apoio está fazendo diferença!</p>
         <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
       </div>`;
 
     } else if (type === "relapse") {
-      subject = `💛 ${fromName} registrou uma recaída — apoio necessário`;
-      html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+      whatsappMsg = `💛 *Atenção — Stake Real*\n\nOlá ${toName}, ${fromName} registrou uma recaída. Este é um momento importante para oferecer apoio sem julgamento. Entre em contato com carinho. 💛\n\n_Enviado automaticamente pelo app Stake Real_`;
+      emailSubject = `💛 ${fromName} registrou uma recaída — apoio necessário`;
+      emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
         <div style="background:#D97706;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
         <h2 style="color:#D97706">Olá, ${toName}!</h2>
-        <p><strong>${fromName}</strong> registrou uma recaída no app Stake Real.</p>
-        <p>Recaídas fazem parte do processo. Este é um momento importante para oferecer apoio sem julgamento.</p>
+        <p><strong>${fromName}</strong> registrou uma recaída. Ofereça apoio sem julgamento. 💛</p>
         ${reportHtml}
-        <p>Entre em contato com carinho e encorajamento. 💛</p>
         <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
       </div>`;
 
     } else if (type === "weekly_report") {
-      subject = `📊 Relatório semanal de ${fromName} — Stake Real`;
-      html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+      whatsappMsg = `📊 *Relatório Semanal — Stake Real*\n\nOlá ${toName}! Aqui está o progresso semanal de ${fromName}:${reportText}\n\nObrigado pelo seu apoio! 💚\n\n_Enviado automaticamente pelo app Stake Real_`;
+      emailSubject = `📊 Relatório semanal de ${fromName} — Stake Real`;
+      emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
         <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
         <h2 style="color:#1B4332">Olá, ${toName}!</h2>
-        <p>Aqui está o relatório semanal de progresso de <strong>${fromName}</strong>:</p>
+        <p>Relatório semanal de <strong>${fromName}</strong>:</p>
         ${reportHtml}
-        <p>Obrigado por fazer parte dessa jornada! 💚</p>
         <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
       </div>`;
 
     } else if (type === "inactive") {
-      subject = `${fromName} pode precisar do seu apoio`;
-      html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+      whatsappMsg = `💚 *Stake Real*\n\nOlá ${toName}, ${fromName} não acessa o app há mais de 3 dias. Que tal entrar em contato e oferecer apoio? Uma mensagem pode fazer toda a diferença! 💚\n\n_Enviado automaticamente pelo app Stake Real_`;
+      emailSubject = `${fromName} pode precisar do seu apoio`;
+      emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
         <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
         <h2 style="color:#1B4332">Olá, ${toName}!</h2>
-        <p><strong>${fromName}</strong> não acessa o app Stake Real há mais de 3 dias.</p>
-        <p>Que tal entrar em contato e oferecer apoio? Uma mensagem pode fazer toda a diferença! 💚</p>
+        <p><strong>${fromName}</strong> não acessa o app há mais de 3 dias. Entre em contato! 💚</p>
+        <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
+      </div>`;
+
+    } else if (type === "invite") {
+      whatsappMsg = `💚 *Stake Real*\n\nOlá ${toName}! ${fromName} te escolheu como Contato Âncora no app de recuperação Stake Real. Você receberá notificações para apoiá-lo(a) na jornada. Obrigado por fazer parte disso! 💚\n\n_Enviado automaticamente pelo app Stake Real_`;
+      emailSubject = `${fromName} te convidou para ser seu Contato Âncora`;
+      emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+        <div style="background:#1B4332;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">Stake Real</h1></div>
+        <h2 style="color:#1B4332">Olá, ${toName}!</h2>
+        <p><strong>${fromName}</strong> te escolheu como Contato Âncora no Stake Real.</p>
+        <ul><li>Receber alertas de inatividade</li><li>Pedidos de apoio urgente</li><li>Relatórios de progresso</li></ul>
+        <p>Seu apoio faz toda a diferença! 💚</p>
         <p style="color:#6B7280;font-size:12px;text-align:center">Equipe Stake Real</p>
       </div>`;
     }
 
-    const sent = await sendEmail(toEmail, subject, html);
+    // Enviar WhatsApp e Email em paralelo
+    const results = await Promise.allSettled([
+      toPhone ? sendWhatsApp(toPhone, whatsappMsg) : Promise.resolve(false),
+      toEmail && emailSubject ? sendEmail(toEmail, emailSubject, emailHtml) : Promise.resolve(false),
+    ]);
 
-    return new Response(JSON.stringify({ ok: sent }), {
+    const whatsOk = results[0].status === "fulfilled" && results[0].value;
+    const emailOk = results[1].status === "fulfilled" && results[1].value;
+
+    return new Response(JSON.stringify({ ok: true, whatsapp: whatsOk, email: emailOk }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err: any) {

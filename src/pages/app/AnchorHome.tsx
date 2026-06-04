@@ -298,15 +298,21 @@ export default function AnchorHome() {
     if (!anchor) return;
     setSendingEmergency(true);
     try {
-      // Abre WhatsApp do próprio usuário com mensagem de urgência
-      const userName = user?.user_metadata?.full_name || "Seu apoiado";
-      const phone = anchor.phone.replace(/\D/g, "");
-      const message = encodeURIComponent(
-        `🚨 ${anchor.name}, preciso de ajuda urgente! Estou com muita vontade de apostar e preciso do seu apoio agora. Por favor, me liga ou me manda mensagem o mais rápido possível. - ${userName}`
-      );
-      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+      // Envia direto via Z-API sem precisar abrir WhatsApp
+      await supabase.functions.invoke("notify-guardian", {
+        body: {
+          type: "urgency",
+          guardian_name: anchor.name,
+          guardian_phone: anchor.phone,
+          guardian_email: anchor.email || undefined,
+          user_name: user?.user_metadata?.full_name || "Seu apoiado",
+          user_id: user?.id,
+        },
+      });
       await logAlert("emergency", "Pedido de apoio urgente enviado via WhatsApp");
-      toast.success("Abrindo WhatsApp para contato urgente...");
+      toast.success("🚨 Âncora notificado com urgência! Ele receberá sua mensagem agora.");
+    } catch (e) {
+      toast.error("Erro ao notificar âncora");
     } finally {
       setSendingEmergency(false);
       setConfirmEmergency(false);
