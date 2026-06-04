@@ -148,7 +148,7 @@ Deno.serve(async (req) => {
       </div>` : "";
 
     if (type === "urgency" || type === "emergency") {
-      whatsappMsg = `🚨 *ALERTA URGENTE — Stake Real*\n\n${toName}, ${fromName} está em situação de risco e precisa do seu apoio AGORA!\n\nPor favor, entre em contato imediatamente por ligação ou mensagem.\n\n_Enviado automaticamente pelo app Stake Real_`;
+      whatsappMsg = `🚨 *${getGreeting()}, ${toName}!*\n\nSomos da *Stake Real*, plataforma de recuperação de ludopatia.\n\nEstamos entrando em contato porque *${fromName}*, seu(sua) ancorado(a) no aplicativo, acionou um *pedido de apoio urgente*.\n\nEle(a) pode estar em situação de risco neste momento. Por favor, entre em contato imediatamente por ligação ou mensagem.\n\nConte com você para fazer a diferença! 💚\n\n_Enviado automaticamente pelo app Stake Real_`;
       emailSubject = `🚨 ${fromName} precisa do seu apoio AGORA`;
       emailHtml = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
         <div style="background:#DC2626;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px"><h1 style="color:white;margin:0">⚠️ Pedido de Apoio Urgente</h1></div>
