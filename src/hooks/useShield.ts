@@ -157,11 +157,19 @@ export function useShield() {
     if (error) throw error;
     setGuardian(data as DigitalGuardian);
 
-    // Fire-and-forget invite via N8N
+    // Fire-and-forget invite via notify-guardian
     if (input.guardian_email || input.guardian_phone) {
       try {
+        const userName = user.user_metadata?.full_name || "Seu apoiado";
         await supabase.functions.invoke("notify-guardian", {
-          body: { type: "invite", guardian: data },
+          body: {
+            type: "invite",
+            guardian_name: input.guardian_name,
+            guardian_email: input.guardian_email || null,
+            guardian_phone: input.guardian_phone || null,
+            user_name: userName,
+            user_id: user.id,
+          },
         });
         await supabase
           .from("digital_guardian")
