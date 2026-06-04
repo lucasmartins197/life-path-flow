@@ -178,6 +178,32 @@ export default function ShieldHome() {
             Lista das casas de aposta que você quer evitar. Use no Tempo de Uso / Bem-estar Digital do seu celular.
           </p>
 
+          {/* Aviso importante */}
+          <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200">
+            <p className="text-xs text-amber-800 font-semibold mb-1">⚠️ Esta lista não bloqueia automaticamente!</p>
+            <p className="text-xs text-amber-700">Use as instruções abaixo para bloquear de verdade no seu celular. Recomendamos o app <strong>BlockSite</strong> (Android) ou <strong>Tempo de Uso</strong> (iPhone).</p>
+          </div>
+
+          {/* Botões de ação rápida */}
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={() => {
+                const list = sites.filter(s => s.active).map(s => s.url).join('\n');
+                navigator.clipboard.writeText(list);
+                toast({ title: "Lista copiada!", description: "Cole no seu app de bloqueio." });
+              }}
+              className="flex-1 h-9 rounded-lg border border-border text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-secondary"
+            >
+              📋 Copiar lista
+            </button>
+            <button
+              onClick={() => window.open('https://play.google.com/store/apps/details?id=co.blocksite', '_blank')}
+              className="flex-1 h-9 rounded-lg bg-primary text-primary-foreground text-xs font-medium flex items-center justify-center gap-1.5"
+            >
+              <Smartphone className="h-3.5 w-3.5" /> BlockSite Android
+            </button>
+          </div>
+
           <div className="flex gap-2 mb-4">
             <Input
               placeholder="adicionar site (ex: pixbet.com)"
