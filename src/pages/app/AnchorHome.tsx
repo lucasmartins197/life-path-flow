@@ -142,7 +142,7 @@ export default function AnchorHome() {
     const { data } = await supabase
       .from("anchor_settings")
       .select("*")
-      .eq("id", user!.id)
+      .eq("user_id", user!.id)
       .maybeSingle();
     if (data) {
       setSettings({
@@ -157,8 +157,8 @@ export default function AnchorHome() {
   const loadAlerts = async () => {
     const { data } = await supabase
       .from("anchor_alerts")
-      .select("id, alert_type, status, sent_at")
-      .eq("id", user!.id)
+      .select("id, alert_type, sent_at")
+      .eq("user_id", user!.id)
       .order("sent_at", { ascending: false })
       .limit(10);
     if (data) setAlerts(data as AnchorAlert[]);
