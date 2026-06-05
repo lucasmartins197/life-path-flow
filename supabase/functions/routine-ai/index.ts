@@ -12,8 +12,8 @@ serve(async (req) => {
   try {
     const { type, category, preferences, userName, stepNumber, reflectionContent } = await req.json();
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("Missing LOVABLE_API_KEY");
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!ANTHROPIC_API_KEY) throw new Error("Missing ANTHROPIC_API_KEY");
 
     let systemPrompt = "";
     let userPrompt = "";
@@ -202,7 +202,7 @@ Responda em JSON: { "title":"Meditação de ${duration} minutos", "sections": [{
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${ANTHROPIC_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
