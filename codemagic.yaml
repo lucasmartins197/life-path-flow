@@ -1,4 +1,39 @@
 workflows:
+  android-release:
+    name: Android Release
+    max_build_duration: 60
+    environment:
+      android_signing:
+        - keystore_reference
+      vars:
+        PACKAGE_NAME: com.apostandonavida.stakereal
+        VITE_SUPABASE_URL: https://dmrlkxwpbwmzpdecsgnw.supabase.co
+        VITE_SUPABASE_PUBLISHABLE_KEY: $SUPABASE_ANON_KEY
+      node: "20"
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Build web app
+        script: npm run build
+      - name: Install Capacitor Android
+        script: npm install @capacitor/core @capacitor/cli @capacitor/android
+      - name: Init Capacitor
+        script: npx cap init "Stake Real" "com.apostandonavida.stakereal" --web-dir dist
+      - name: Add Android platform
+        script: npx cap add android || true
+      - name: Sync Capacitor
+        script: npx cap sync android
+      - name: Build Android AAB
+        script: |
+          cd android
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+
   ios-release:
     name: iOS Release
     max_build_duration: 60
@@ -7,30 +42,26 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.apostandonavida.stakereal
       vars:
-        BUNDLE_ID: "com.apostandonavida.stakereal"
-        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
-        XCODE_SCHEME: "App"
-        VITE_SUPABASE_URL: "https://dmrlkxwpbwmzpdecsgnw.supabase.co"
-        VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_GrVvRKNeoFyX-QlBoBr8xw_Dura2nUZ"
-      node: 20
+        BUNDLE_ID: com.apostandonavida.stakereal
+        VITE_SUPABASE_URL: https://dmrlkxwpbwmzpdecsgnw.supabase.co
+        VITE_SUPABASE_PUBLISHABLE_KEY: $SUPABASE_ANON_KEY
+      node: "20"
     scripts:
       - name: Install dependencies
         script: npm install
       - name: Build web app
         script: npm run build
-      - name: Install Capacitor
+      - name: Install Capacitor iOS
         script: npm install @capacitor/core @capacitor/cli @capacitor/ios
       - name: Init Capacitor
         script: npx cap init "Stake Real" "com.apostandonavida.stakereal" --web-dir dist
       - name: Add iOS platform
-        script: npx cap add ios
+        script: npx cap add ios || true
       - name: Sync Capacitor
         script: npx cap sync ios
       - name: Install CocoaPods
-        script: |
-          cd ios/App
-          pod install
-      - name: Build and archive
+        script: cd ios/App && pod install
+      - name: Build iOS
         script: |
           xcode-project use-profiles
           xcodebuild \
@@ -46,10 +77,8 @@ workflows:
             --config Release
     artifacts:
       - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        auth: integration
         submit_to_testflight: true
+        submit_to_app_store: false
