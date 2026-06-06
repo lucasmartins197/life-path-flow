@@ -29,10 +29,6 @@ workflows:
           ./gradlew bundleRelease
     artifacts:
       - android/app/build/outputs/**/*.aab
-    publishing:
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
 
   ios-release:
     name: iOS Release
@@ -77,8 +73,3 @@ workflows:
             --config Release
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
-        submit_to_app_store: false
