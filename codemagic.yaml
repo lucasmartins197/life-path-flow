@@ -32,13 +32,17 @@ workflows:
 
   ios-release:
     name: iOS Release
-    max_build_duration: 60
+    max_build_duration: 120
+    integrations:
+      app_store_connect: STAKE REAL
     environment:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.apostandonavida.stakereal
       vars:
         BUNDLE_ID: com.apostandonavida.stakereal
+        XCODE_WORKSPACE: ios/App/App.xcworkspace
+        XCODE_SCHEME: App
         VITE_SUPABASE_URL: https://dmrlkxwpbwmzpdecsgnw.supabase.co
         VITE_SUPABASE_PUBLISHABLE_KEY: $SUPABASE_ANON_KEY
       node: "20"
@@ -73,3 +77,8 @@ workflows:
             --config Release
     artifacts:
       - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
