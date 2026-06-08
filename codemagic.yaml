@@ -53,6 +53,12 @@ workflows:
         script: npx cap init "Stake Real" "com.apostandonavida.stakereal" --web-dir dist
       - name: Add iOS platform
         script: npx cap add ios || true
+      - name: Fix iOS deployment target
+        script: |
+          cd ios/App
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 14.0/g' App.xcodeproj/project.pbxproj || true
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '14.0'/" Podfile || true
+          grep -q "platform :ios" Podfile || echo "platform :ios, '14.0'" >> Podfile
       - name: Sync Capacitor
         script: npx cap sync ios
       - name: Install CocoaPods
