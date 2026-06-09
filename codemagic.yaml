@@ -53,17 +53,20 @@ workflows:
         script: npx cap init "Stake Real" "com.apostandonavida.stakereal" --web-dir dist
       - name: Add iOS platform
         script: npx cap add ios || true
-      - name: Fix iOS deployment target and install pods
+      - name: Fix deployment target
         script: |
           cd ios/App
-          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '16.0'/" Podfile || true
-          grep -q "platform :ios" Podfile || sed -i '' '1s/^/platform :ios, '"'"'14.0'"'"'\n/' Podfile
-          cat Podfile | head -5
+          sed -i "" "s/platform :ios, '[0-9.]*'/platform :ios, '16.0'/" Podfile || true
+          grep -q "platform :ios" Podfile || sed -i "" "1s/^/platform :ios, '16.0'\n/" Podfile
+          sed -i "" "s/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g" App.xcodeproj/project.pbxproj
           pod install --repo-update
       - name: Sync Capacitor
         script: npx cap sync ios
       - name: Build and export IPA
-        script: xcode-project use-profiles && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -archivePath build/App.xcarchive archive && xcode-project build-ipa --workspace ios/App/App.xcworkspace --config Release
+        script: |
+          xcode-project use-profiles
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -archivePath build/App.xcarchive archive
+          xcode-project build-ipa --workspace ios/App/App.xcworkspace --config Release
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
