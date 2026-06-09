@@ -56,7 +56,7 @@ workflows:
       - name: Fix iOS deployment target and install pods
         script: |
           cd ios/App
-          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '14.0'/" Podfile || true
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '16.0'/" Podfile || true
           grep -q "platform :ios" Podfile || sed -i '' '1s/^/platform :ios, '"'"'14.0'"'"'\n/' Podfile
           cat Podfile | head -5
           pod install --repo-update
