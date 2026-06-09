@@ -61,7 +61,7 @@ workflows:
           cat Podfile | head -5
           pod install --repo-update
       - name: Sync Capacitor
-        script: npx cap sync ios --no-deps
+        script: npx cap sync ios
       - name: Build and export IPA
         script: xcode-project use-profiles && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -archivePath build/App.xcarchive archive && xcode-project build-ipa --workspace ios/App/App.xcworkspace --config Release
     artifacts:
