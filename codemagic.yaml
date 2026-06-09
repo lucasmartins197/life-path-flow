@@ -53,16 +53,15 @@ workflows:
         script: npx cap init "Stake Real" "com.apostandonavida.stakereal" --web-dir dist
       - name: Add iOS platform
         script: npx cap add ios || true
-      - name: Fix iOS deployment target
+      - name: Fix iOS deployment target and install pods
         script: |
           cd ios/App
-          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 14.0/g' App.xcodeproj/project.pbxproj || true
           sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '14.0'/" Podfile || true
-          grep -q "platform :ios" Podfile || echo "platform :ios, '14.0'" >> Podfile
+          grep -q "platform :ios" Podfile || sed -i '' '1s/^/platform :ios, '"'"'14.0'"'"'\n/' Podfile
+          cat Podfile | head -5
+          pod install --repo-update
       - name: Sync Capacitor
-        script: npx cap sync ios
-      - name: Install CocoaPods
-        script: cd ios/App && pod install
+        script: npx cap sync ios --no-deps
       - name: Build and export IPA
         script: xcode-project use-profiles && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -archivePath build/App.xcarchive archive && xcode-project build-ipa --workspace ios/App/App.xcworkspace --config Release
     artifacts:
