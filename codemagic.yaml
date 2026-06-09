@@ -66,7 +66,7 @@ workflows:
         script: |
           xcode-project use-profiles
           xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -archivePath build/App.xcarchive archive
-          xcode-project build-ipa --workspace ios/App/App.xcworkspace --config Release
+          xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App --config Release
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
